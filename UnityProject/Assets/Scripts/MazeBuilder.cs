@@ -5,25 +5,33 @@ using System.Collections.Generic;
 public class MazeBuilder : MonoBehaviour {
 
 	[SerializeField] private int width = 1, height = 1;
-	[SerializeField] private GameObject floor, wall, parent;
+	[SerializeField] private GameObject floor, wall, parent, goal, camera;
 
 	private GameObject o;
-
+	private Camera cam;
 	private MazeNode start;
 
 	private List<List<GameObject>> ground, vertWalls, horiWalls; 
 	private List<MazeNode> maze;
-	// Use this for initialization
+
 	void Start () {
 
 		maze = new List<MazeNode>();
 		ground = new List<List<GameObject>> ();
 		vertWalls = new List<List<GameObject>> ();
 		horiWalls = new List<List<GameObject>> ();
+		cam = camera.GetComponent<Camera> ();
+
+		// ******************** Size Camera **********************
+
+		camera.transform.position = new Vector3 ((width - 1) * 5, (height - 1) * 5, -10);
+		cam.orthographicSize = height * 5;
 
 		// ******************** Full Grid Build *************************
 
 		if (width > 0 && height > 0) {
+			o = Instantiate (goal, new Vector3((width - 1) * 10, (height -1) * 10, 0), Quaternion.identity) as GameObject;
+
 			for (int i = 0; i <= width; i++)
 			{
 				List<GameObject> column = new List<GameObject>();
