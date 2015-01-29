@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MazeBuilder : MonoBehaviour {
 
@@ -9,9 +10,9 @@ public class MazeBuilder : MonoBehaviour {
 
 	private GameObject o;
 	private Camera cam;
-	private MazeNode start;
+	private MazeNode start, current;
 
-	private List<List<GameObject>> ground, vertWalls, horiWalls; 
+	public List<List<GameObject>> ground, vertWalls, horiWalls; 
 	private List<MazeNode> maze;
 
 	void Start () {
@@ -103,20 +104,67 @@ public class MazeBuilder : MonoBehaviour {
 		foreach (GameObject item in GameObject.FindGameObjectsWithTag("Maze")){
 			item.transform.parent = parent.transform;
 		}
-
-		SetClickZone(0, 0, moveRange);
+		current = maze.Find (n => n.xy == "(0, 0)");
+		ClearMaze ();
+		SetClickZone(0, 0);
 
 	}
 
-	public void SetClickZone(int x, int y, int range)
+	public void SetClickZone(int x, int y)
 	{
-		foreach (MazeNode node in maze){
-			ground[node.x][node.y].GetComponent<FloorController>().restore ();
-		}
 		List<MazeNode> clickArea = new List<MazeNode>();
-		clickArea = MazeNode.getRange (maze.Find (n => n.xy == "("+x+", "+y+")"), range);
+		current = maze.Find (n => n.xy == "("+x+", "+y+")");
+		clickArea = MazeNode.getRange (current, moveRange);
 		foreach (MazeNode area in clickArea){
 			ground[area.x][area.y].GetComponent<FloorController>().makeClickable ();
+		}
+	}
+
+	public List<MazeNode> GetPath(int x, int y)
+	{
+		List<List<MazeNode>> PathFinder = new List<List<MazeNode>>();
+		for (int l = 0; l <= moveRange; l++){
+			if(PathFinder.Count == 0){
+				List<MazeNode> FirstPath = new List<MazeNode>();
+				FirstPath.Add (current);
+				PathFinder.Add (FirstPath);
+			}else{
+				List<List<MazeNode>> temp = new List<List<MazeNode>>();
+				foreach (List<MazeNode> path in PathFinder){
+					List<MazeNode> forks = new List<MazeNode>();
+					foreach (MazeNode way in path.Last().GetAllConnections()){
+						forks.Add (way);
+					}
+					if(forks.Count > 0) {
+						foreach(MazeNode way in forks){
+							if(!path.Contains (way)){
+								temp.Add (new List<MazeNode>(path));
+								temp.Last().Add(way);
+							}
+						}
+					}
+				}
+				if (temp.Count > 0)
+				{
+					foreach (List<MazeNode> newPath in temp){
+						PathFinder.Add (newPath);
+					}
+				}
+				foreach (List<MazeNode> output in PathFinder) {
+					if (output.Exists(n => n.xy == "(" + x + ", " + y + ")"))
+					{
+						return output;
+						break;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	public void ClearMaze(){
+		foreach (MazeNode node in maze){
+			ground[node.x][node.y].GetComponent<FloorController>().restore ();
 		}
 	}
 }
@@ -171,15 +219,32 @@ public class MazeNode {
 		}
 	}
 
+	public List<MazeNode> GetAllConnections(){
+		List<MazeNode> output = new List<MazeNode>();
+		if (back != null) {
+			output.Add (back);
+		}
+		if (forwards.Count > 0){
+			foreach(MazeNode forward in forwards){
+				output.Add (forward);
+			}
+		}
+		return output;
+	}
+
 	static public List<MazeNode> getRange (MazeNode origin, int range){
 		List<MazeNode> output = new List<MazeNode> ();
 		output.Add (origin);
 		for (int i = 0; i < range; i++){
 			List<MazeNode> temp = new List<MazeNode> ();
 			foreach (MazeNode node in output){
-				temp.Add (node.back);
-				foreach (MazeNode n in node.forwards){
-					temp.Add (n);
+				if (node.back != null) {
+					temp.Add (node.back);
+				}
+				if (node.forwards.Count > 0){
+					foreach (MazeNode n in node.forwards){
+						temp.Add (n);
+					}
 				}
 			}
 			foreach (MazeNode node in temp)
