@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class MazeBuilder : MonoBehaviour {
 
-	[SerializeField] private int width = 1, height = 1;
+	[SerializeField] private int width = 1, height = 1, moveRange = 5;
 	[SerializeField] private GameObject floor, wall, parent, goal, camera;
 
 	private GameObject o;
@@ -30,7 +30,7 @@ public class MazeBuilder : MonoBehaviour {
 		// ******************** Full Grid Build *************************
 
 		if (width > 0 && height > 0) {
-			o = Instantiate (goal, new Vector3((width - 1) * 10, (height -1) * 10, 0), Quaternion.identity) as GameObject;
+			o = Instantiate (goal, new Vector3((width - 1) * 10, (height -1) * 10, -1), Quaternion.identity) as GameObject;
 
 			for (int i = 0; i <= width; i++)
 			{
@@ -45,6 +45,8 @@ public class MazeBuilder : MonoBehaviour {
 						o = Instantiate (floor, 
 					                     new Vector3(i * 10, j * 10, 0), 
 					                     Quaternion.Euler(270, 0, 0)) as GameObject;
+						o.GetComponent<FloorController>().x = i;
+						o.GetComponent<FloorController>().y = j;
 						column.Add (o);
 						maze.Add (new MazeNode(i,j));
 
@@ -79,7 +81,7 @@ public class MazeBuilder : MonoBehaviour {
 		// ***************** Create Maze *******************
 
 
-		start = maze[Random.Range(0, maze.Count - 1)];
+		start = maze[Random.Range(0, maze.Count)];
 		start.start = true;
 		start.makeMaze ();
 	
@@ -102,37 +104,44 @@ public class MazeBuilder : MonoBehaviour {
 			item.transform.parent = parent.transform;
 		}
 
+		SetClickZone(0, 0, moveRange);
+
+	}
+
+	public void SetClickZone(int x, int y, int range)
+	{
+		foreach (MazeNode node in maze){
+			ground[node.x][node.y].GetComponent<FloorController>().restore ();
+		}
+		List<MazeNode> clickArea = new List<MazeNode>();
+		clickArea = MazeNode.getRange (maze.Find (n => n.xy == "("+x+", "+y+")"), range);
+		foreach (MazeNode area in clickArea){
+			ground[area.x][area.y].GetComponent<FloorController>().makeClickable ();
+		}
 	}
 }
 
 public class MazeNode {
 
-	enum direction
-	{
-		north,
-		east,
-		south,
-		west,
-	}
+	enum direction { north, east, south, west }
 
 	public int x, y;
-	public string xy {
-		get{ return "(" + x + ", " + y + ")"; }
-	} 
-	public bool active = true;
-	public bool start = false;
-
+	public string xy { get{ return "(" + x + ", " + y + ")"; } } 
+	public bool active = true, start = false;
 	public MazeNode[] AdjacentNodes;
+	public List<MazeNode> forwards;
 	public MazeNode back;
 
 	public MazeNode() {
 		AdjacentNodes = new MazeNode[4];
+		forwards = new List<MazeNode> ();
 	}
 
 	public MazeNode(int a, int b) {
 		x = a;
 		y = b;
 		AdjacentNodes = new MazeNode[4];
+		forwards = new List<MazeNode> ();
 	}
 
 	public void makeMaze() {
@@ -144,25 +153,43 @@ public class MazeNode {
 				availableNodes.Add (node);
 			}
 		}
-		if (availableNodes.Count > 0)
-		{
+		if (availableNodes.Count > 0){
 			MazeNode next = availableNodes[Random.Range(0, availableNodes.Count)];
 			next.back = this;
+			forwards.Add(next);
 			next.makeMaze();
-		}
-		else if (back != null)
-		{
+		} else if (back != null) {
 			back.makeMaze ();
 		}
 	}
 
 	public void FindAdjacentNodes(List<MazeNode> maze) {
 		foreach (MazeNode node in maze) {
-			if(isAdjacent(node))
-			{
+			if(isAdjacent(node)) {
 				AdjacentNodes[(int)AdjacentNodeDirection(node)] = node;
 			}
 		}
+	}
+
+	static public List<MazeNode> getRange (MazeNode origin, int range){
+		List<MazeNode> output = new List<MazeNode> ();
+		output.Add (origin);
+		for (int i = 0; i < range; i++){
+			List<MazeNode> temp = new List<MazeNode> ();
+			foreach (MazeNode node in output){
+				temp.Add (node.back);
+				foreach (MazeNode n in node.forwards){
+					temp.Add (n);
+				}
+			}
+			foreach (MazeNode node in temp)
+			{
+				if (!output.Contains(node)){
+				    output.Add (node);
+				}
+			}
+		}
+		return output;
 	}
 
 	private bool isAdjacent (MazeNode node)

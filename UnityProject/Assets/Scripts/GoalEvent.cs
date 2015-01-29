@@ -3,8 +3,7 @@ using System.Collections;
 
 public class GoalEvent : MonoBehaviour {
 
-	void OnTriggerEnter(Collider other)
-	{
+	void OnTriggerEnter(Collider col) {
 		Application.LoadLevel (Application.loadedLevel);
 	}
 }

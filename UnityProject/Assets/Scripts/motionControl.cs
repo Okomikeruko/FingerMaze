@@ -11,5 +11,3 @@ public class motionControl : MonoBehaviour {
 										  0) * speed;
 	}
 }
-
-

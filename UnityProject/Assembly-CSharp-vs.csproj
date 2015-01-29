@@ -46,9 +46,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\GoalEvent.cs" />
+     <Compile Include="Assets\FloorController.cs" />
+     <Compile Include="Assets\Scripts\GoalEvent.cs" />
      <Compile Include="Assets\Scripts\MazeBuilder.cs" />
-     <Compile Include="Assets\motionControl.cs" />
+     <Compile Include="Assets\Scripts\motionControl.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

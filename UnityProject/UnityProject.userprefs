@@ -1,9 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MazeBuilder.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\FloorController.cs">
     <Files>
-      <File FileName="Assets\Scripts\MazeBuilder.cs" Line="28" Column="73" />
-      <File FileName="Assets\motionControl.cs" Line="11" Column="13" />
+      <File FileName="Assets\Scripts\GoalEvent.cs" Line="6" Column="37" />
+      <File FileName="Assets\Scripts\motionControl.cs" Line="13" Column="2" />
+      <File FileName="Assets\Scripts\MazeBuilder.cs" Line="107" Column="19" />
+      <File FileName="Assets\FloorController.cs" Line="40" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
