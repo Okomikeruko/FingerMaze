@@ -14,12 +14,19 @@ public class GoalEvent : MonoBehaviour {
 		floorController = GameObject.Find ("Origin").GetComponent<MazeBuilder>().ground[x][y].GetComponent<FloorController>();
 	}
 
-	void OnTriggerEnter(Collider col) {
+	void OnTriggerEnter(Collider col) 
+	{
+		IncrementData();
 		Application.LoadLevel (Application.loadedLevel);
 	}
 
 	void OnMouseDown()
 	{
 		floorController.watch();
+	}
+
+	void IncrementData()
+	{
+		GameObject.Find ("Data").GetComponent<data>().IncrementData();
 	}
 }

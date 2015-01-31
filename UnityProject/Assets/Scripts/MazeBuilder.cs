@@ -5,9 +5,9 @@ using System.Linq;
 
 public class MazeBuilder : MonoBehaviour {
 
-	[SerializeField] private int width = 1, height = 1, moveRange = 5;
 	[SerializeField] private GameObject floor, wall, parent, goal, camera;
 
+	private int width = 1, height = 1, moveRange = 5;
 	private GameObject o;
 	private Camera cam;
 	private MazeNode start, current;
@@ -15,7 +15,11 @@ public class MazeBuilder : MonoBehaviour {
 	public List<List<GameObject>> ground, vertWalls, horiWalls; 
 	private List<MazeNode> maze;
 
+
+
 	void Start () {
+
+		setValues();
 
 		maze = new List<MazeNode>();
 		ground = new List<List<GameObject>> ();
@@ -166,6 +170,14 @@ public class MazeBuilder : MonoBehaviour {
 		foreach (MazeNode node in maze){
 			ground[node.x][node.y].GetComponent<FloorController>().restore ();
 		}
+	}
+
+	private void setValues()
+	{
+		data d = GameObject.Find ("Data").GetComponent<data>();
+		width = d.width;
+		height = d.height;
+		moveRange = d.moveRange;
 	}
 }
 
