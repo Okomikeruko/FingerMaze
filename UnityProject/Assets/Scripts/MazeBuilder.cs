@@ -9,7 +9,7 @@ public class MazeBuilder : MonoBehaviour {
 
 	private int width = 1, height = 1, moveRange = 5;
 	private GameObject o;
-	private Camera cam;
+	private CameraControl cam;
 	private MazeNode start, current;
 
 	public List<List<GameObject>> ground, vertWalls, horiWalls; 
@@ -25,12 +25,12 @@ public class MazeBuilder : MonoBehaviour {
 		ground = new List<List<GameObject>> ();
 		vertWalls = new List<List<GameObject>> ();
 		horiWalls = new List<List<GameObject>> ();
-		cam = camera.GetComponent<Camera> ();
+		cam = camera.GetComponent<CameraControl> ();
 
 		// ******************** Size Camera **********************
 
 		camera.transform.position = new Vector3 ((width - 1) * 5, (height - 1) * 5, -10);
-		cam.orthographicSize = height * 5;
+		cam.setMax(height * 5);
 
 		// ******************** Full Grid Build *************************
 

@@ -10,6 +10,9 @@ public class data : MonoBehaviour {
 				moveRange = 5,
 				moveRangeIncrement = 0;
 
+	public float cameraSizeMin = 5,
+				 zoomSpeed = 5;
+
 	// Use this for initialization
 	void Start () {
 		DontDestroyOnLoad(this);
