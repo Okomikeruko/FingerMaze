@@ -15,7 +15,7 @@ public class MazeBuilder : MonoBehaviour {
 	public List<List<GameObject>> ground, vertWalls, horiWalls; 
 	private List<MazeNode> maze;
 
-	public List<MazeNode> solution;
+	public List<MazeNode> solution, toBeginning, toEnd;
 
 
 	void Start () {
@@ -24,6 +24,8 @@ public class MazeBuilder : MonoBehaviour {
 
 		maze = new List<MazeNode>();
 		solution = new List<MazeNode>();
+		toBeginning = new List<MazeNode>();
+		toEnd = new List<MazeNode>();
 		ground = new List<List<GameObject>> ();
 		vertWalls = new List<List<GameObject>> ();
 		horiWalls = new List<List<GameObject>> ();
@@ -87,10 +89,11 @@ public class MazeBuilder : MonoBehaviour {
 
 		// ***************** Create Maze *******************
 		
-		start = maze[0];
+		start = maze[Random.Range(0,maze.Count)];
 		start.start = true;
 		start.makeMaze ();
-		Debug.Log (solution.Count);
+		solution = GetSolution(toBeginning, toEnd);
+
 
 		// **************** Delete Walls to Form Maze *******************
 
@@ -124,6 +127,17 @@ public class MazeBuilder : MonoBehaviour {
 		foreach (MazeNode area in clickArea){
 			ground[area.x][area.y].GetComponent<FloorController>().makeClickable ();
 		}
+	}
+
+	private List<MazeNode> GetSolution(List<MazeNode> Begin, List<MazeNode> End){
+		while(Begin.Count > 1 && End.Count > 1 && Begin[1] == End [1]) { 
+			Begin.RemoveAt(0);
+			End.RemoveAt (0);
+		}
+		Begin.RemoveAt(0);
+		Begin.Reverse();
+		Begin.AddRange(End);
+		return Begin;
 	}
 
 	public List<MazeNode> GetPath(int x, int y)
@@ -210,6 +224,8 @@ public class MazeNode {
 		active = false;
 		List<MazeNode> availableNodes = new List<MazeNode>();
 		List<MazeNode> solution = GameObject.Find("Origin").GetComponent<MazeBuilder>().solution;
+		List<MazeNode> toBeginning = GameObject.Find("Origin").GetComponent<MazeBuilder>().toBeginning;
+		List<MazeNode> toEnd = GameObject.Find("Origin").GetComponent<MazeBuilder>().toEnd;
 		int lastX = GameObject.Find("Origin").GetComponent<MazeBuilder>().width - 1;
 		int lastY = GameObject.Find("Origin").GetComponent<MazeBuilder>().height - 1;
 
@@ -222,13 +238,20 @@ public class MazeNode {
 			MazeNode next = availableNodes[Random.Range(0, availableNodes.Count)];
 			next.back = this;
 			forwards.Add(next);
-			if(!solution.Exists(n => n.xy == "(" + lastX + ", " + lastY + ")")){
-				solution.Add (next);
+
+			if(!toBeginning.Exists(n => n.xy == "(0, 0)")){
+				toBeginning.Add (next);
+			}
+			if(!toEnd.Exists(n => n.xy == "(" + lastX + ", " + lastY + ")")){
+				toEnd.Add (next);
 			}
 			next.makeMaze();
 		} else if (back != null) {
-			if(!solution.Exists(n => n.xy == "(" + lastX + ", " + lastY + ")")){
-				solution.RemoveAt(solution.Count - 1);
+			if(!toBeginning.Exists(n => n.xy == "(0, 0)")){
+				toBeginning.RemoveAt(toBeginning.Count - 1);
+			}
+			if(!toEnd.Exists(n => n.xy == "(" + lastX + ", " + lastY + ")")){
+				toEnd.RemoveAt(toEnd.Count - 1);
 			}
 			back.makeMaze ();
 		}

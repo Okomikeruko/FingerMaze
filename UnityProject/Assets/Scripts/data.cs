@@ -15,7 +15,10 @@ public class data : MonoBehaviour {
 				moveRangeIncrement = 0;
 
 	public float cameraSizeMin = 5,
-				 zoomSpeed = 5;
+				 zoomSpeed = 5,
+				 cameraZoomOffset = 5;
+
+	public Vector3 CameraOffset = new Vector3 (5, 5, 0);
 
 	void Start () {
 		DontDestroyOnLoad(this);
@@ -24,7 +27,7 @@ public class data : MonoBehaviour {
 
 	public void IncrementData(){
 		width += (width < maxWidth) ? widthIncrement : 0;
-		height += (width < maxWidth) ? heightIncrement : 0;
+		height += (height < maxHeight) ? heightIncrement : 0;
 		moveRange += (moveRange < maxMoveRange) ? moveRangeIncrement : 0;
 		level++;
 	}

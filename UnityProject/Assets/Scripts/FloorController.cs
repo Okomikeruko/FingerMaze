@@ -7,7 +7,7 @@ public class FloorController : MonoBehaviour {
 	public int x, y;
 
 	[SerializeField] 
-	private Color clickableColor, originalColor;
+	private Color clickableColor, clickingColor, originalColor;
 
 	public delegate void watcher();
 	public watcher watch;
@@ -21,8 +21,22 @@ public class FloorController : MonoBehaviour {
 		mc = GameObject.Find("Hero").GetComponent<motionControl>();
 	}
 
+	void Update(){
+		bool ctrl = (Input.GetKey(KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl));
+		if(Input.GetMouseButtonDown (1) && ctrl && x == 0 && y == 0 )
+		{
+			StartCoroutine(move(mazeBuilder.solution));
+			foreach (MazeNode n in mazeBuilder.solution)
+			{
+				mazeBuilder.ground[n.x][n.y].renderer.material.color = Color.cyan;
+			}
+		}
+	}
+
 	void OnMouseDown() {
-		watch();
+		if (Input.touchCount == 1){
+			watch();
+		}
 	}
 
 	public void makeClickable() {
@@ -45,6 +59,7 @@ public class FloorController : MonoBehaviour {
 
 	IEnumerator move(List<MazeNode> Path){
 		mazeBuilder.ClearMaze();
+		renderer.material.color = clickingColor;
 		GameObject Hero = GameObject.Find ("Hero");
 		while(Path.Count > 1){
 			Vector3 last = new Vector3(Path[0].x, Path[0].y, 0) * 10;

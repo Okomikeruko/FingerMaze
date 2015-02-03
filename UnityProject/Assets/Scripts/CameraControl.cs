@@ -7,17 +7,18 @@ public class CameraControl : MonoBehaviour {
 	private Vector3 cameraPosMin, cameraPosMax, cameraPosMid, cameraPosMinScale, cameraPosMaxScale, startPoint;
 	private int level;
 
+	public float sensitivity;
+	private data d;
+
 	void Start () {
-		data d = GameObject.Find ("Data").GetComponent<data>();
+		d = GameObject.Find ("Data").GetComponent<data>();
 		level = d.level;
 		cameraSizeMin = d.cameraSizeMin;
 		zoomSpeed = d.zoomSpeed;
 		cameraPosMin = new Vector3 (0, 0, -10);
 		cameraPosMax = new Vector3 (d.width * 10, d.height * 10, -10);
-		cameraPosMid = Vector3.Scale(cameraPosMax, new Vector3(0.5f, 0.5f, 1));
-		cameraPosMid -= new Vector3 (5, 5, 0);
+		cameraPosMid = Vector3.Scale(cameraPosMax, new Vector3(0.5f, 0.5f, 1)) - d.CameraOffset;
 		cameraPosMinScale = cameraPosMaxScale = cameraPosMid;
-		Debug.Log (cameraPosMid);
 	}
 
 	void Update () {
@@ -34,11 +35,19 @@ public class CameraControl : MonoBehaviour {
 
 			float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
-			zoom (deltaMagnitudeDiff * -zoomSpeed);
+			Vector3 center = new Vector3((touchOne.position.x + touchZero.position.x)/2,
+			                             (touchOne.position.y + touchZero.position.y)/2,
+			                             0);
+			Vector3 prevCenter = new Vector3((touchOnePrevPos.x + touchZeroPrevPos.x)/2,
+			                             (touchOnePrevPos.y + touchZeroPrevPos.y)/2,
+			                             0);
+			Vector3 centerDiff = (prevCenter - center) * (sensitivity * this.camera.orthographicSize);
+
+			zoom (deltaMagnitudeDiff * -zoomSpeed, centerDiff);
 		}
 
 
-		zoom (Input.GetAxis ("Mouse ScrollWheel") * zoomSpeed);
+/*		zoom (Input.GetAxis ("Mouse ScrollWheel") * zoomSpeed);
 
 		if (Input.GetMouseButtonDown (1) || Input.GetMouseButtonDown (2))
 		{
@@ -49,10 +58,10 @@ public class CameraControl : MonoBehaviour {
 		{
 			pan ((startPoint - Input.mousePosition) * 0.1F);
 			startPoint = Input.mousePosition;
-		}
+		}*/
 	}
-
-	void zoom(float input)
+	
+	void zoom(float input, Vector3 Center)
 	{
 		input *= level;
 		float change = this.camera.orthographicSize - input;
@@ -63,12 +72,13 @@ public class CameraControl : MonoBehaviour {
 		cameraPosMaxScale = Vector3.Lerp (cameraPosMax, 
 		                                  cameraPosMid, 
 		                                  zoomRatio (this.camera.orthographicSize, cameraSizeMin, cameraSizeMax));
-		//pan(Vector3.zero);
+		pan(Center);
 	}
 
 	float zoomRatio(float current, float min, float max){
 		return (current - min)/(max - min);
 	}
+
 	void pan (Vector3 input)
 	{
 		Vector3 newPosition = transform.position + input;
@@ -80,6 +90,6 @@ public class CameraControl : MonoBehaviour {
 
 	public void setMax(float max)
 	{
-		this.camera.orthographicSize = cameraSizeMax = max + 5;
+		this.camera.orthographicSize = cameraSizeMax = max + d.cameraZoomOffset;
 	}
 }
