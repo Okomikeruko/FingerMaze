@@ -7,7 +7,7 @@ public class MazeBuilder : MonoBehaviour {
 
 	[SerializeField] private GameObject floor, wall, parent, goal, camera;
 
-	private int width = 1, height = 1, moveRange = 5;
+	public int width = 1, height = 1, moveRange = 5;
 	private GameObject o;
 	private CameraControl cam;
 	private MazeNode start, current;
@@ -15,6 +15,7 @@ public class MazeBuilder : MonoBehaviour {
 	public List<List<GameObject>> ground, vertWalls, horiWalls; 
 	private List<MazeNode> maze;
 
+	public List<MazeNode> solution;
 
 
 	void Start () {
@@ -22,6 +23,7 @@ public class MazeBuilder : MonoBehaviour {
 		setValues();
 
 		maze = new List<MazeNode>();
+		solution = new List<MazeNode>();
 		ground = new List<List<GameObject>> ();
 		vertWalls = new List<List<GameObject>> ();
 		horiWalls = new List<List<GameObject>> ();
@@ -84,12 +86,12 @@ public class MazeBuilder : MonoBehaviour {
 		}
 
 		// ***************** Create Maze *******************
-
-
-		start = maze[Random.Range(0, maze.Count)];
+		
+		start = maze[0];
 		start.start = true;
 		start.makeMaze ();
-	
+		Debug.Log (solution.Count);
+
 		// **************** Delete Walls to Form Maze *******************
 
 		foreach (MazeNode node in maze){
@@ -206,8 +208,11 @@ public class MazeNode {
 
 	public void makeMaze() {
 		active = false;
-
 		List<MazeNode> availableNodes = new List<MazeNode>();
+		List<MazeNode> solution = GameObject.Find("Origin").GetComponent<MazeBuilder>().solution;
+		int lastX = GameObject.Find("Origin").GetComponent<MazeBuilder>().width - 1;
+		int lastY = GameObject.Find("Origin").GetComponent<MazeBuilder>().height - 1;
+
 		foreach (MazeNode node in AdjacentNodes){
 			if (node != null && node.active){
 				availableNodes.Add (node);
@@ -217,8 +222,14 @@ public class MazeNode {
 			MazeNode next = availableNodes[Random.Range(0, availableNodes.Count)];
 			next.back = this;
 			forwards.Add(next);
+			if(!solution.Exists(n => n.xy == "(" + lastX + ", " + lastY + ")")){
+				solution.Add (next);
+			}
 			next.makeMaze();
 		} else if (back != null) {
+			if(!solution.Exists(n => n.xy == "(" + lastX + ", " + lastY + ")")){
+				solution.RemoveAt(solution.Count - 1);
+			}
 			back.makeMaze ();
 		}
 	}

@@ -4,14 +4,20 @@ using System.Collections;
 public class CameraControl : MonoBehaviour {
 
 	private float cameraSizeMin, cameraSizeMax, zoomSpeed;
-	private Vector3 cameraPosMin, cameraPosMax, startPoint;
+	private Vector3 cameraPosMin, cameraPosMax, cameraPosMid, cameraPosMinScale, cameraPosMaxScale, startPoint;
+	private int level;
 
 	void Start () {
 		data d = GameObject.Find ("Data").GetComponent<data>();
+		level = d.level;
 		cameraSizeMin = d.cameraSizeMin;
 		zoomSpeed = d.zoomSpeed;
 		cameraPosMin = new Vector3 (0, 0, -10);
 		cameraPosMax = new Vector3 (d.width * 10, d.height * 10, -10);
+		cameraPosMid = Vector3.Scale(cameraPosMax, new Vector3(0.5f, 0.5f, 1));
+		cameraPosMid -= new Vector3 (5, 5, 0);
+		cameraPosMinScale = cameraPosMaxScale = cameraPosMid;
+		Debug.Log (cameraPosMid);
 	}
 
 	void Update () {
@@ -48,21 +54,32 @@ public class CameraControl : MonoBehaviour {
 
 	void zoom(float input)
 	{
+		input *= level;
 		float change = this.camera.orthographicSize - input;
 		this.camera.orthographicSize = Mathf.Clamp(change, cameraSizeMin, cameraSizeMax);
+		cameraPosMinScale = Vector3.Lerp (cameraPosMin, 
+		                               cameraPosMid, 
+		                               zoomRatio (this.camera.orthographicSize, cameraSizeMin, cameraSizeMax));
+		cameraPosMaxScale = Vector3.Lerp (cameraPosMax, 
+		                                  cameraPosMid, 
+		                                  zoomRatio (this.camera.orthographicSize, cameraSizeMin, cameraSizeMax));
+		//pan(Vector3.zero);
 	}
 
+	float zoomRatio(float current, float min, float max){
+		return (current - min)/(max - min);
+	}
 	void pan (Vector3 input)
 	{
 		Vector3 newPosition = transform.position + input;
-		newPosition = new Vector3 (Mathf.Clamp (newPosition.x, cameraPosMin.x, cameraPosMax.x),
-		                           Mathf.Clamp (newPosition.y, cameraPosMin.y, cameraPosMax.y),
-		                           Mathf.Clamp (newPosition.z, cameraPosMin.z, cameraPosMax.z));
+		newPosition = new Vector3 (Mathf.Clamp (newPosition.x, cameraPosMinScale.x, cameraPosMaxScale.x),
+		                           Mathf.Clamp (newPosition.y, cameraPosMinScale.y, cameraPosMaxScale.y),
+		                           Mathf.Clamp (newPosition.z, cameraPosMinScale.z, cameraPosMaxScale.z));
 		transform.position = newPosition;
 	}
 
 	public void setMax(float max)
 	{
-		this.camera.orthographicSize = cameraSizeMax = max;
+		this.camera.orthographicSize = cameraSizeMax = max + 5;
 	}
 }
