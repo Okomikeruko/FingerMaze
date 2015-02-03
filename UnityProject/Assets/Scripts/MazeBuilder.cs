@@ -131,10 +131,14 @@ public class MazeBuilder : MonoBehaviour {
 
 	private List<MazeNode> GetSolution(List<MazeNode> Begin, List<MazeNode> End){
 		while(Begin.Count > 1 && End.Count > 1 && Begin[1] == End [1]) { 
-			Begin.RemoveAt(0);
+			Begin.RemoveAt (0);
 			End.RemoveAt (0);
 		}
-		Begin.RemoveAt(0);
+		if(Begin.Count > 1){
+			Begin.RemoveAt(0);
+		}else{
+			End.RemoveAt (0);
+		}
 		Begin.Reverse();
 		Begin.AddRange(End);
 		return Begin;

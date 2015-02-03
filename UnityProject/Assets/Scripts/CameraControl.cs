@@ -3,6 +3,11 @@ using System.Collections;
 
 public class CameraControl : MonoBehaviour {
 
+	[SerializeField]
+	private Shade shade;
+
+	private ColorPallet colorPallet;
+
 	private float cameraSizeMin, cameraSizeMax, zoomSpeed;
 	private Vector3 cameraPosMin, cameraPosMax, cameraPosMid, cameraPosMinScale, cameraPosMaxScale, startPoint;
 	private int level;
@@ -10,6 +15,12 @@ public class CameraControl : MonoBehaviour {
 	public float sensitivity;
 	private data d;
 
+	void Awake () {
+		colorPallet = GameObject.Find ("Data").GetComponent<ColorPallet>();
+		int index = colorPallet.index;
+		camera.backgroundColor = colorPallet.colorPallet[index].colors[(int)shade].color;
+	}
+	
 	void Start () {
 		d = GameObject.Find ("Data").GetComponent<data>();
 		level = d.level;
@@ -45,20 +56,6 @@ public class CameraControl : MonoBehaviour {
 
 			zoom (deltaMagnitudeDiff * -zoomSpeed, centerDiff);
 		}
-
-
-/*		zoom (Input.GetAxis ("Mouse ScrollWheel") * zoomSpeed);
-
-		if (Input.GetMouseButtonDown (1) || Input.GetMouseButtonDown (2))
-		{
-			startPoint = Input.mousePosition;
-		}
-
-		if (Input.GetMouseButton (1) || Input.GetMouseButton (2))
-		{
-			pan ((startPoint - Input.mousePosition) * 0.1F);
-			startPoint = Input.mousePosition;
-		}*/
 	}
 	
 	void zoom(float input, Vector3 Center)

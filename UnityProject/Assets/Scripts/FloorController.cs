@@ -8,6 +8,9 @@ public class FloorController : MonoBehaviour {
 
 	[SerializeField] 
 	private Color clickableColor, clickingColor, originalColor;
+	[SerializeField]
+	private Shade clickableShade, clickingShade, originalShade;
+	private ColorPallet colorPallet;
 
 	public delegate void watcher();
 	public watcher watch;
@@ -16,12 +19,21 @@ public class FloorController : MonoBehaviour {
 	private MazeBuilder mazeBuilder;
 	private motionControl mc;
 
-	void Start() {
+	void Awake() {
+		colorPallet = GameObject.Find ("Data").GetComponent<ColorPallet>();
 		mazeBuilder = GameObject.Find("Origin").GetComponent<MazeBuilder>();
 		mc = GameObject.Find("Hero").GetComponent<motionControl>();
+
+		int index = colorPallet.index;
+		clickableColor = colorPallet.colorPallet[index].colors[(int)clickableShade].color;
+		clickingColor = colorPallet.colorPallet[index].colors[(int)clickingShade].color;
+		originalColor = colorPallet.colorPallet[index].colors[(int)originalShade].color;
+
+		renderer.material.color = originalColor;
 	}
 
 	void Update(){
+
 		bool ctrl = (Input.GetKey(KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl));
 		if(Input.GetMouseButtonDown (1) && ctrl && x == 0 && y == 0 )
 		{
