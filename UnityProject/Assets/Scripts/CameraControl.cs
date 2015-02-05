@@ -6,8 +6,6 @@ public class CameraControl : MonoBehaviour {
 	[SerializeField]
 	private Shade shade;
 
-	private ColorPallet colorPallet;
-
 	private float cameraSizeMin, cameraSizeMax, zoomSpeed;
 	private Vector3 cameraPosMin, cameraPosMax, cameraPosMid, cameraPosMinScale, cameraPosMaxScale, startPoint;
 	private int level;
@@ -16,11 +14,13 @@ public class CameraControl : MonoBehaviour {
 	private data d;
 
 	void Awake () {
-		colorPallet = GameObject.Find ("Data").GetComponent<ColorPallet>();
-		int index = colorPallet.index;
-		camera.backgroundColor = colorPallet.colorPallet[index].colors[(int)shade].color;
+		ColorPallet.coloring += Recolor;
 	}
-	
+
+	void Recolor(){
+		this.camera.backgroundColor = ColorPallet.pallet[ColorPallet.i].colors[(int)shade].color;
+	}
+
 	void Start () {
 		d = GameObject.Find ("Data").GetComponent<data>();
 		level = d.level;

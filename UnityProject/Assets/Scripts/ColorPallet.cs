@@ -2,8 +2,34 @@
 using System;
 
 public class ColorPallet : MonoBehaviour {
-	public int index = 0;
+	public static int i;
+	public int index = 1;
 	public ColorSwatch[] colorPallet;
+	public static ColorSwatch[] pallet;
+
+	public delegate void Delegate();  
+	public static event Delegate coloring;
+
+	void Start()
+	{
+		pallet = colorPallet;
+		i = index;
+	}
+
+	public static void CallRecolor()
+	{
+		if(coloring != null){
+			coloring();
+		}
+	}
+	public static void Clear()
+	{
+		coloring = null;
+	}
+	public static void SetIndex(int x)
+	{
+		i = x;
+	}
 }
 
 [Serializable] 

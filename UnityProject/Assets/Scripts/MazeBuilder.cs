@@ -5,17 +5,17 @@ using System.Linq;
 
 public class MazeBuilder : MonoBehaviour {
 
-	[SerializeField] private GameObject floor, wall, parent, goal, camera;
+	[SerializeField] private GameObject floor, baseFloor, wall, wallParent, floorParent, goal, camera;
 
-	public int width = 1, height = 1, moveRange = 5;
+	public static int width = 1, height = 1, moveRange = 5;
 	private GameObject o;
 	private CameraControl cam;
-	private MazeNode start, current;
+	private static MazeNode start, current;
 
-	public List<List<GameObject>> ground, vertWalls, horiWalls; 
-	private List<MazeNode> maze;
+	public static List<List<GameObject>> ground, vertWalls, horiWalls; 
+	private static List<MazeNode> maze;
 
-	public List<MazeNode> solution, toBeginning, toEnd;
+	public static List<MazeNode> solution, toBeginning, toEnd;
 
 
 	void Start () {
@@ -39,7 +39,10 @@ public class MazeBuilder : MonoBehaviour {
 		// ******************** Full Grid Build *************************
 
 		if (width > 0 && height > 0) {
-			o = Instantiate (goal, new Vector3((width - 1) * 10, (height -1) * 10, -1), Quaternion.identity) as GameObject;
+			o = Instantiate (goal, new Vector3((width - 1) * 10, (height - 1) * 10, -1), Quaternion.identity) as GameObject;
+			o = Instantiate (baseFloor, new Vector3((width - 1) * 5, (height - 1 ) * 5, 3), Quaternion.Euler(270, 0, 0)) as GameObject;
+			o.transform.localScale = new Vector3 (width, 1, height);
+			o.transform.parent = floorParent.transform;
 
 			for (int i = 0; i <= width; i++)
 			{
@@ -52,10 +55,11 @@ public class MazeBuilder : MonoBehaviour {
 					if (i < width){
 			// Floors
 						o = Instantiate (floor, 
-					                     new Vector3(i * 10, j * 10, 0), 
+					                     new Vector3(i * 10, j * 10, 1), 
 					                     Quaternion.Euler(270, 0, 0)) as GameObject;
 						o.GetComponent<FloorController>().x = i;
 						o.GetComponent<FloorController>().y = j;
+						o.transform.parent = floorParent.transform;
 						column.Add (o);
 						maze.Add (new MazeNode(i,j));
 
@@ -63,12 +67,14 @@ public class MazeBuilder : MonoBehaviour {
 						o = Instantiate (wall, 
 						                 new Vector3(i * 10, (j * 10) - 5, 0), 
 						                 Quaternion.Euler(0, 0, 90)) as GameObject;
+						o.transform.parent = wallParent.transform;
 						hori.Add (o);
 					}
 			// Vertical Walls
 					o = Instantiate (wall, 
 					                 new Vector3((i * 10) - 5, j * 10, 0), 
 					                 Quaternion.Euler(0, 0, 0)) as GameObject;
+					o.transform.parent = wallParent.transform;
 					vert.Add (o);
 				}
 			// Top Horizontal Walls
@@ -76,6 +82,7 @@ public class MazeBuilder : MonoBehaviour {
 					o = Instantiate (wall, 
 					                 new Vector3(i * 10, (height * 10) - 5, 0), 
 					                 Quaternion.Euler(0, 0, 90)) as GameObject;
+					o.transform.parent = wallParent.transform;
 				}
 				ground.Add( column );
 				vertWalls.Add ( vert );
@@ -100,9 +107,13 @@ public class MazeBuilder : MonoBehaviour {
 		foreach (MazeNode node in maze){
 			if (node.back != null){
 				if (node.back.x != node.x){
+					vertWalls[Mathf.Max (node.x, node.back.x)][node.y].transform.parent = null;
+					vertWalls[Mathf.Max (node.x, node.back.x)][node.y].GetComponent<CustomColoring>().removeMe();
 					Destroy (vertWalls[Mathf.Max (node.x, node.back.x)][node.y]);
 				}
 				if (node.back.y != node.y){
+					horiWalls[node.x][Mathf.Max (node.y, node.back.y)].transform.parent = null;
+					horiWalls[node.x][Mathf.Max (node.y, node.back.y)].GetComponent<CustomColoring>().removeMe();
 					Destroy (horiWalls[node.x][Mathf.Max (node.y, node.back.y)]);
 				}
 			}
@@ -110,20 +121,32 @@ public class MazeBuilder : MonoBehaviour {
 
 		// ***************** Set Remaining Object to Maze Parent Object ***************
 
-		foreach (GameObject item in GameObject.FindGameObjectsWithTag("Maze")){
-			item.transform.parent = parent.transform;
-		}
-		current = maze.Find (n => n.xy == "(0, 0)");
+		current = maze[0];
 		ClearMaze ();
 		SetClickZone(0, 0);
 
+		ColorPallet.CallRecolor();
+
+		MeshFilter[] meshFilters = wallParent.GetComponentsInChildren<MeshFilter>();
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		int z = 0;
+		while (z < meshFilters.Length)
+		{
+			combine[z].mesh = meshFilters[z].sharedMesh;
+			combine[z].transform = meshFilters[z].transform.localToWorldMatrix;
+			meshFilters[z].gameObject.active = false;
+			z++;
+		}
+		wallParent.GetComponent<MeshFilter>().mesh = new Mesh();
+		wallParent.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+		wallParent.gameObject.SetActive (true);
 	}
 
-	public void SetClickZone(int x, int y)
+	public static void SetClickZone(int x, int y)
 	{
 		List<MazeNode> clickArea = new List<MazeNode>();
-		current = maze.Find (n => n.xy == "("+x+", "+y+")");
-		clickArea = MazeNode.getRange (current, moveRange);
+		MazeBuilder.current = maze.Find (n => n.xy == "("+x+", "+y+")");
+		clickArea = MazeNode.getRange (MazeBuilder.current, MazeBuilder.moveRange);
 		foreach (MazeNode area in clickArea){
 			ground[area.x][area.y].GetComponent<FloorController>().makeClickable ();
 		}
@@ -144,7 +167,7 @@ public class MazeBuilder : MonoBehaviour {
 		return Begin;
 	}
 
-	public List<MazeNode> GetPath(int x, int y)
+	public static List<MazeNode> GetPath(int x, int y)
 	{
 		List<List<MazeNode>> PathFinder = new List<List<MazeNode>>();
 		for (int l = 0; l <= moveRange; l++){
@@ -186,8 +209,8 @@ public class MazeBuilder : MonoBehaviour {
 		return null;
 	}
 
-	public void ClearMaze(){
-		foreach (MazeNode node in maze){
+	public static void ClearMaze(){
+		foreach (MazeNode node in MazeBuilder.maze){
 			ground[node.x][node.y].GetComponent<FloorController>().restore ();
 		}
 	}
@@ -227,11 +250,11 @@ public class MazeNode {
 	public void makeMaze() {
 		active = false;
 		List<MazeNode> availableNodes = new List<MazeNode>();
-		List<MazeNode> solution = GameObject.Find("Origin").GetComponent<MazeBuilder>().solution;
-		List<MazeNode> toBeginning = GameObject.Find("Origin").GetComponent<MazeBuilder>().toBeginning;
-		List<MazeNode> toEnd = GameObject.Find("Origin").GetComponent<MazeBuilder>().toEnd;
-		int lastX = GameObject.Find("Origin").GetComponent<MazeBuilder>().width - 1;
-		int lastY = GameObject.Find("Origin").GetComponent<MazeBuilder>().height - 1;
+		List<MazeNode> solution = MazeBuilder.solution;
+		List<MazeNode> toBeginning = MazeBuilder.toBeginning;
+		List<MazeNode> toEnd = MazeBuilder.toEnd;
+		int lastX = MazeBuilder.width - 1;
+		int lastY = MazeBuilder.height - 1;
 
 		foreach (MazeNode node in AdjacentNodes){
 			if (node != null && node.active){

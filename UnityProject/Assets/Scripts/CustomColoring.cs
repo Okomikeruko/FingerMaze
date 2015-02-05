@@ -4,13 +4,19 @@ using System.Collections;
 public class CustomColoring : MonoBehaviour {
 
 	[SerializeField]
-	private Shade shade;
-
-	private ColorPallet colorPallet;
+	public Shade shade;
 
 	void Awake () {
-		colorPallet = GameObject.Find ("Data").GetComponent<ColorPallet>();
-		int index = colorPallet.index;
-		renderer.material.color = colorPallet.colorPallet[index].colors[(int)shade].color;
+		ColorPallet.coloring += setColor;
+	//	setColor ();
+	}
+
+	public void removeMe(){
+		ColorPallet.coloring -= setColor;
+	}
+
+	void setColor()
+	{
+		renderer.material.color = ColorPallet.pallet[ColorPallet.i].colors[(int)shade].color;
 	}
 }
