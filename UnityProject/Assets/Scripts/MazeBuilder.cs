@@ -126,6 +126,7 @@ public class MazeBuilder : MonoBehaviour {
 		SetClickZone(0, 0);
 
 		ColorPallet.CallRecolor();
+		GamePlay.setRemaining(solution.Count);
 
 		MeshFilter[] meshFilters = wallParent.GetComponentsInChildren<MeshFilter>();
 		CombineInstance[] combine = new CombineInstance[meshFilters.Length];

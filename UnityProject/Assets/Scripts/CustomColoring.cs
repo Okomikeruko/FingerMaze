@@ -8,7 +8,6 @@ public class CustomColoring : MonoBehaviour {
 
 	void Awake () {
 		ColorPallet.coloring += setColor;
-	//	setColor ();
 	}
 
 	public void removeMe(){
