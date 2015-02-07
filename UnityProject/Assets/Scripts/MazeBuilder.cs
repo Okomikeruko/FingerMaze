@@ -7,7 +7,8 @@ public class MazeBuilder : MonoBehaviour {
 
 	[SerializeField] private GameObject floor, baseFloor, wall, wallParent, floorParent, goal, camera;
 
-	public static int width = 1, height = 1, moveRange = 5;
+	public static int width = 1, height = 1, moveRange = 5, level = 1;
+	private Vector3 offset;
 	private GameObject o;
 	private CameraControl cam;
 	private static MazeNode start, current;
@@ -33,8 +34,8 @@ public class MazeBuilder : MonoBehaviour {
 
 		// ******************** Size Camera **********************
 
-		camera.transform.position = new Vector3 ((width - 1) * 5, (height - 1) * 5, -10);
-		cam.setMax(height * 5);
+		camera.transform.position = new Vector3 ((width - 1) * (5 + offset.x), (((17F / 3F) * height) - 6), -10);
+		cam.setMax(((17f / 3f) * height) + 1);
 
 		// ******************** Full Grid Build *************************
 
@@ -222,6 +223,8 @@ public class MazeBuilder : MonoBehaviour {
 		width = d.width;
 		height = d.height;
 		moveRange = d.moveRange;
+		offset = d.CameraOffset; 
+		level = d.level;
 	}
 }
 
