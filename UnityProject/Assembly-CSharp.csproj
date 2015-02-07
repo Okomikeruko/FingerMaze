@@ -46,17 +46,16 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\GUICounter.cs" />
-     <Compile Include="Assets\Scripts\ButtonBehavior.cs" />
      <Compile Include="Assets\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Scripts\CanvasElementRecolor.cs" />
      <Compile Include="Assets\Scripts\ColorPallet.cs" />
      <Compile Include="Assets\Scripts\CustomColoring.cs" />
      <Compile Include="Assets\Scripts\FloorController.cs" />
+     <Compile Include="Assets\Scripts\GUICounter.cs" />
      <Compile Include="Assets\Scripts\GamePlay.cs" />
-     <Compile Include="Assets\Scripts\GamePlayGUI.cs" />
      <Compile Include="Assets\Scripts\GoalEvent.cs" />
      <Compile Include="Assets\Scripts\MazeBuilder.cs" />
+     <Compile Include="Assets\Scripts\Pause.cs" />
      <Compile Include="Assets\Scripts\data.cs" />
      <Compile Include="Assets\Scripts\motionControl.cs" />
  <Reference Include="UnityEngine.UI">

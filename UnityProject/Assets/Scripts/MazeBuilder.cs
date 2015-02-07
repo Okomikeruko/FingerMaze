@@ -130,14 +130,14 @@ public class MazeBuilder : MonoBehaviour {
 		GamePlay.setRemaining(solution.Count);
 
 		MeshFilter[] meshFilters = wallParent.GetComponentsInChildren<MeshFilter>();
-		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length-1];
 		int z = 0;
-		while (z < meshFilters.Length)
+		for (int n = 0; n < meshFilters.Length; n++)
 		{
-			combine[z].mesh = meshFilters[z].sharedMesh;
-			combine[z].transform = meshFilters[z].transform.localToWorldMatrix;
-			meshFilters[z].gameObject.active = false;
-			z++;
+			if(meshFilters[n].sharedMesh == null) continue;
+			combine[z].mesh = meshFilters[n].sharedMesh;
+			combine[z++].transform = meshFilters[n].transform.localToWorldMatrix;
+			meshFilters[n].gameObject.active = false;
 		}
 		wallParent.GetComponent<MeshFilter>().mesh = new Mesh();
 		wallParent.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);

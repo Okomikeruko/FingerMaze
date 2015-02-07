@@ -36,4 +36,18 @@ public class CanvasElementRecolor : MonoBehaviour {
 			break;
 		}
 	}
+
+	public void CallRecolor()
+	{
+		ColorPallet.CallRecolor();
+	}
+
+	public void ChangeColor(int i)
+	{
+		if(i >= -1 && i <= 7)
+		{
+			ColorPallet.SetIndex(i);
+			ColorPallet.CallRecolor();
+		}
+	}
 }
