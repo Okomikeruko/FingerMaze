@@ -34,7 +34,7 @@ public class MazeBuilder : MonoBehaviour {
 
 		// ******************** Size Camera **********************
 
-		camera.transform.position = new Vector3 ((width - 1) * (5 + offset.x), (((17F / 3F) * height) - 6), -10);
+		camera.transform.position = new Vector3 ((width - 1) * 5, (((17F / 3F) * height) - 6), -10);
 		cam.setMax(((17f / 3f) * height) + 1);
 
 		// ******************** Full Grid Build *************************
@@ -219,12 +219,11 @@ public class MazeBuilder : MonoBehaviour {
 
 	private void setValues()
 	{
-		data d = GameObject.Find ("Data").GetComponent<data>();
-		width = d.width;
-		height = d.height;
-		moveRange = d.moveRange;
-		offset = d.CameraOffset; 
-		level = d.level;
+		width = data.width;
+		height = data.height;
+		moveRange = data.moveRange;
+		offset = data.CameraOffset; 
+		level = data.level;
 	}
 }
 

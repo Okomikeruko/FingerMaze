@@ -13,12 +13,12 @@ public class motionControl : MonoBehaviour {
 		tr = transform;
 	}
 
-	public static IEnumerator move(List<MazeNode> Path/*, Transform t = motionControl.tr*/){
+	public static IEnumerator move(List<MazeNode> Path){
 		GamePlay.counterUp();
+		GamePlay.updateCounters();
 		MazeBuilder.ClearMaze();
 		int x = Path[Path.Count - 1].x;
 		int y = Path[Path.Count - 1].y;
-	//	shade = clickingShade;
 		ColorPallet.CallRecolor ();
 		while(Path.Count > 1){
 			Vector3 last = new Vector3(Path[0].x, Path[0].y, 0) * 10;

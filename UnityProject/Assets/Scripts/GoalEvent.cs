@@ -52,18 +52,14 @@ public class GoalEvent : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col) 
 	{
-		IncrementData();
+		data.IncrementData();
 		ColorPallet.Clear ();
+		GamePlay.ClearCounters();
 		Application.LoadLevel (Application.loadedLevel);
 	}
 
 	void OnMouseDown()
 	{
 		floorController.watch();
-	}
-
-	void IncrementData()
-	{
-		GameObject.Find ("Data").GetComponent<data>().IncrementData();
 	}
 }

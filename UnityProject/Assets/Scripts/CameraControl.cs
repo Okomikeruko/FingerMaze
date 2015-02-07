@@ -11,7 +11,6 @@ public class CameraControl : MonoBehaviour {
 	private int level;
 
 	public float sensitivity;
-	private data d;
 
 	void Awake () {
 		ColorPallet.coloring += Recolor;
@@ -22,13 +21,12 @@ public class CameraControl : MonoBehaviour {
 	}
 
 	void Start () {
-		d = GameObject.Find ("Data").GetComponent<data>();
-		level = d.level;
-		cameraSizeMin = d.cameraSizeMin;
-		zoomSpeed = d.zoomSpeed;
+		level = data.level;
+		cameraSizeMin = data.cameraSizeMin;
+		zoomSpeed = data.zoomSpeed;
 		cameraPosMin = new Vector3 (0, 0, -10);
-		cameraPosMax = new Vector3 (d.width * 10, d.height * 10, -10);
-		cameraPosMid = Vector3.Scale(cameraPosMax, new Vector3(0.5f, 0.5f, 1)) - d.CameraOffset;
+		cameraPosMax = new Vector3 (data.width * 10, data.height * 10, -10);
+		cameraPosMid = Vector3.Scale(cameraPosMax, new Vector3(0.5f, 0.5f, 1)) - data.CameraOffset;
 		cameraPosMinScale = cameraPosMaxScale = cameraPosMid;
 	}
 
@@ -87,6 +85,6 @@ public class CameraControl : MonoBehaviour {
 
 	public void setMax(float max)
 	{
-		this.camera.orthographicSize = cameraSizeMax = max + d.cameraZoomOffset;
+		this.camera.orthographicSize = cameraSizeMax = max + data.cameraZoomOffset;
 	}
 }
