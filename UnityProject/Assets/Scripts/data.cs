@@ -20,6 +20,9 @@ public class data : MonoBehaviour {
 	ZoomSpeed = 5,
 	CameraZoomOffset = 5;
 
+	[SerializeField]
+	private Vector3 CameraOffset = new Vector3 (5, 5, 0);
+
 	public static int level,
 					  width, 
 					  height, 
@@ -35,7 +38,7 @@ public class data : MonoBehaviour {
 				 zoomSpeed,
 				 cameraZoomOffset;
 
-	public static Vector3 CameraOffset = new Vector3 (5, 5, 0);
+	public static Vector3 cameraOffset;
 
 	void Awake () {
 		level = Level;
@@ -51,6 +54,7 @@ public class data : MonoBehaviour {
 		cameraSizeMin = CameraSizeMin;
 		zoomSpeed = ZoomSpeed;
 		cameraZoomOffset = CameraZoomOffset;
+		cameraOffset = CameraOffset;
 	}
 
 	void Start () {

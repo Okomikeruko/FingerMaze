@@ -26,7 +26,7 @@ public class CameraControl : MonoBehaviour {
 		zoomSpeed = data.zoomSpeed;
 		cameraPosMin = new Vector3 (0, 0, -10);
 		cameraPosMax = new Vector3 (data.width * 10, data.height * 10, -10);
-		cameraPosMid = Vector3.Scale(cameraPosMax, new Vector3(0.5f, 0.5f, 1)) - data.CameraOffset;
+		cameraPosMid = new Vector3 ((data.width - 1) * 5, (((17F / 3F) * data.height) - 6), -10);
 		cameraPosMinScale = cameraPosMaxScale = cameraPosMid;
 	}
 

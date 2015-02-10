@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GamePlay : MonoBehaviour {
 
@@ -44,5 +45,49 @@ public class GamePlay : MonoBehaviour {
 	public static int getScore()
 	{
 		return 500;
+	}
+}
+
+public static class SaveData {
+	
+	private static Save save;
+	
+	static void savePuzzle(List<MazeNode> maze, int level)
+	{
+		save.CurrentMaze = maze;
+		save.CurrentLevel = level;
+	}
+	
+	static void saveMove(MazeNode position, int moves, int score)
+	{
+		save.CurrentPosition = position;
+		save.CurrentRemainingMoves = moves;
+		save.CurrentScore = score;
+		if (save.HighScore < save.CurrentScore)
+		{
+			save.HighScore = save.CurrentScore;
+		}
+	}
+	
+	static void reset()
+	{
+		int h = save.HighScore;
+		save = new Save();
+		save.HighScore = h;
+	}
+}
+
+public class Save {
+	
+	public List<MazeNode> CurrentMaze;
+	public int CurrentLevel;
+	public MazeNode CurrentPosition;
+	public int CurrentRemainingMoves;
+	public int CurrentScore;
+	public int HighScore;
+	
+	public Save(){ 
+		CurrentMaze = new List<MazeNode>();
+		CurrentPosition = new MazeNode();
 	}
 }

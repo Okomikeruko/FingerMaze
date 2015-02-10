@@ -222,7 +222,7 @@ public class MazeBuilder : MonoBehaviour {
 		width = data.width;
 		height = data.height;
 		moveRange = data.moveRange;
-		offset = data.CameraOffset; 
+		offset = data.cameraOffset; 
 		level = data.level;
 	}
 }
