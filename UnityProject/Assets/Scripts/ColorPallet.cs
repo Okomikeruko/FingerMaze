@@ -29,6 +29,7 @@ public class ColorPallet : MonoBehaviour {
 	public static void SetIndex(int x)
 	{
 		i = x;
+		SaveData.saveColor(i);
 	}
 }
 

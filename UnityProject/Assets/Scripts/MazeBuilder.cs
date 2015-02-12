@@ -133,7 +133,8 @@ public class MazeBuilder : MonoBehaviour {
 		current = maze[0];
 		ClearMaze ();
 		SetClickZone(0, 0);
-		
+
+		ColorPallet.SetIndex (SaveData.GetSave().ColorIndex);
 		ColorPallet.CallRecolor();
 		GamePlay.setRemaining(solution.Count);
 		
@@ -283,7 +284,8 @@ public class MazeBuilder : MonoBehaviour {
 		current = maze[(saveData.CurrentPosition.x * height) + saveData.CurrentPosition.y];
 		ClearMaze ();
 		SetClickZone(saveData.CurrentPosition.x, saveData.CurrentPosition.y);
-		
+
+		ColorPallet.SetIndex (SaveData.GetSave().ColorIndex);
 		ColorPallet.CallRecolor();
 		GamePlay.setRemaining(saveData.CurrentRemainingMoves);
 		

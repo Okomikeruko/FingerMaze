@@ -98,12 +98,19 @@ public static class SaveData {
 		}
 		SaveToXml();
 	}
+	public static void saveColor(int colorIndex)
+	{
+		save.ColorIndex = colorIndex;
+		SaveToXml();
+	}
 
 	public static void reset()
 	{
 		int h = save.HighScore;
+		int i = save.ColorIndex;
 		save = new Save();
 		save.HighScore = h;
+		save.ColorIndex = i;
 		SaveToXml();
 	}
 
@@ -167,6 +174,9 @@ public static class SaveData {
 [XmlRoot("root")]
 public class Save {
 
+	[XmlAttribute("ColorIndex")]
+	public int ColorIndex { get; set;}
+
 	[XmlElement("MazeNode")]
 	public List<MazeNodeData> CurrentMaze { get; set;  }
 
@@ -195,6 +205,7 @@ public class Save {
 	public int HighScore { get; set; }
 	
 	public Save(){ 
+		ColorIndex = 1;
 		CurrentMaze = new List<MazeNodeData>();
 		CurrentSolution = new List<MazeNodeData>();
 		CurrentPosition = new MazeNodeData();
