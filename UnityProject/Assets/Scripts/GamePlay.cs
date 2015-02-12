@@ -13,7 +13,7 @@ public class GamePlay : MonoBehaviour {
 	public delegate void Counters();
 	public static event Counters counters;
 
-	private static int counter = 0,	remaining = 0;
+	private static int counter = 0,	remaining = 0, score = 0;
 	public string FileName;
 
 	void Start()
@@ -22,7 +22,7 @@ public class GamePlay : MonoBehaviour {
 	}
 
 	void OnLevelWasLoaded(int l) {
-		counter = 1;
+		counter = 0;
 		updateCounters ();
 	}
 	
@@ -38,18 +38,51 @@ public class GamePlay : MonoBehaviour {
 
 	public static void counterUp(){
 		counter++;
+		int output = remaining - counter;
+		if (output < 0){
+			Debug.Log ("Game Over");
+		}
+
 	}
 
 	public static void setRemaining(int r) {
-		remaining = (int)Mathf.Ceil(r/data.moveRange) + 1;
+		float multiplier = Mathf.Max ((data.slope * data.level) + data.intercept, 1);
+		remaining += (int)((Mathf.Ceil(r/data.moveRange) + 1) * multiplier);
+	}
+
+	public static void setRemainingFromSave(int r) {
+		remaining = r;
+	}
+
+	public static void scoreUp(int s)
+	{
+		score += s;
+	}
+
+	public static void setScore(int s)
+	{
+		score = s;
+	}
+
+	public static void ZeroCounter()
+	{
+		counter = 0;
+		remaining = 0;
+		score = 0;
 	}
 
 	public static int getCounter() {
-		return remaining - counter; 
+		int output = remaining - counter;
+		return output; 
 	}
 
 	public static int getScore() {
-		return 500;
+		return score;
+	}
+
+	public static int getHighScore()
+	{
+		return SaveData.GetSave().HighScore;
 	}
 }
 
@@ -174,34 +207,34 @@ public static class SaveData {
 [XmlRoot("root")]
 public class Save {
 
-	[XmlAttribute("ColorIndex")]
+	[XmlAttribute("C")]
 	public int ColorIndex { get; set;}
 
-	[XmlElement("MazeNode")]
+	[XmlElement("MN")]
 	public List<MazeNodeData> CurrentMaze { get; set;  }
 
-	[XmlAttribute("Level")]
+	[XmlAttribute("Lvl")]
 	public int CurrentLevel { get; set; }
 
-	[XmlAttribute("Width")]
+	[XmlAttribute("w")]
 	public int Width { get; set; }
 
-	[XmlAttribute("Height")]
+	[XmlAttribute("h")]
 	public int Height { get; set; }
 
-	[XmlElement("SolutionNode")]
+	[XmlElement("SN")]
 	public List<MazeNodeData> CurrentSolution { get; set; }
 
-	[XmlElement("CurrentPosition")] 
+	[XmlElement("P")] 
 	public MazeNodeData CurrentPosition { get; set; }
 
-	[XmlElement("RemainingMoves")]
+	[XmlElement("R")]
 	public int CurrentRemainingMoves { get; set; }
 
-	[XmlElement("CurrentScore")]
+	[XmlElement("S")]
 	public int CurrentScore { get; set; }
 
-	[XmlElement("HighScore")]
+	[XmlElement("H")]
 	public int HighScore { get; set; }
 	
 	public Save(){ 

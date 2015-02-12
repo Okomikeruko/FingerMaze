@@ -27,6 +27,7 @@ public class MazeBuilder : MonoBehaviour {
 		} else {
 			BuildTheMaze();
 		}
+		GamePlay.updateCounters();
 	}
 
 	public void BuildTheMaze(){
@@ -287,7 +288,8 @@ public class MazeBuilder : MonoBehaviour {
 
 		ColorPallet.SetIndex (SaveData.GetSave().ColorIndex);
 		ColorPallet.CallRecolor();
-		GamePlay.setRemaining(saveData.CurrentRemainingMoves);
+		GamePlay.setRemainingFromSave(SaveData.GetSave().CurrentRemainingMoves); 
+		GamePlay.setScore(SaveData.GetSave().CurrentScore);
 		
 		MeshFilter[] meshFilters = wallParent.GetComponentsInChildren<MeshFilter>();
 		CombineInstance[] combine = new CombineInstance[meshFilters.Length-1];
@@ -383,6 +385,7 @@ public class MazeBuilder : MonoBehaviour {
 	public void ResetGame(){
 		ColorPallet.Clear ();
 		GamePlay.ClearCounters();
+		GamePlay.ZeroCounter();
 		SaveData.reset();
 		data.CallReset();
 		Application.LoadLevel (Application.loadedLevel);
@@ -566,7 +569,7 @@ public class MazeNodeData{
 	[XmlAttribute("y")]
 	public int y { get; set; }
 
-	[XmlElement("Directions")]
+	[XmlElement("D")]
 	public List<direction> dir { get; set; }
 
 	public MazeNodeData(){

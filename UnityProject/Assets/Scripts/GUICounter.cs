@@ -7,7 +7,8 @@ public class GUICounter : MonoBehaviour {
 	public enum CounterType {
 		Moves,
 		Level,
-		Score
+		Score,
+		HighScore
 	}
 
 	[SerializeField]
@@ -28,6 +29,9 @@ public class GUICounter : MonoBehaviour {
 		case CounterType.Score:
 			GamePlay.counters += scoreUpdate;
 			break;
+		case CounterType.HighScore:
+			GamePlay.counters += highScoreUpdate;
+			break;
 		default:
 			break;
 		}
@@ -41,6 +45,11 @@ public class GUICounter : MonoBehaviour {
 	public void scoreUpdate()
 	{
 		text.text = string.Format ("{0:00000}", GamePlay.getScore());
+	}
+
+	public void highScoreUpdate()
+	{
+		text.text = string.Format ("{0:00000}", GamePlay.getHighScore());
 	}
 
 	public void movesUpdate()

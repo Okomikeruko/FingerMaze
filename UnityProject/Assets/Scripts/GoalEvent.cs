@@ -16,6 +16,7 @@ public class GoalEvent : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col) 
 	{
+		GamePlay.scoreUp(GamePlay.getCounter() * 50);
 		data.IncrementData();
 		ColorPallet.Clear ();
 		GamePlay.ClearCounters();

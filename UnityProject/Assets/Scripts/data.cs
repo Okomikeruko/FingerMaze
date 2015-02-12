@@ -19,7 +19,9 @@ public class data : MonoBehaviour {
 	MoveRangeIncrement = 0;
 
 	[SerializeField]
-	private float CameraSizeMin = 5,
+	private float Slope = -0.375F,
+	Intercept = 4.375f,
+	CameraSizeMin = 5,
 	ZoomSpeed = 5,
 	CameraZoomOffset = 5;
 
@@ -37,7 +39,9 @@ public class data : MonoBehaviour {
 					  maxMoveRange,
 					  moveRangeIncrement;
 
-	public static float cameraSizeMin,
+	public static float slope,
+				 intercept,
+				 cameraSizeMin,
 				 zoomSpeed,
 				 cameraZoomOffset;
 
@@ -82,6 +86,8 @@ public class data : MonoBehaviour {
 		maxMoveRange = MaxMoveRange;
 		moveRangeIncrement = MoveRangeIncrement;
 		cameraSizeMin = CameraSizeMin;
+		slope = Slope;
+		intercept = Intercept;
 		zoomSpeed = ZoomSpeed;
 		cameraZoomOffset = CameraZoomOffset;
 		cameraOffset = CameraOffset;

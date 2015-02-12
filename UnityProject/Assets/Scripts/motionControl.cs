@@ -15,6 +15,7 @@ public class motionControl : MonoBehaviour {
 
 	public static IEnumerator move(List<MazeNode> Path){
 		GamePlay.counterUp();
+		GamePlay.scoreUp(10);
 		GamePlay.updateCounters();
 		MazeBuilder.ClearMaze();
 		int x = Path[Path.Count - 1].x;
