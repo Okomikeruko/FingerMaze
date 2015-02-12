@@ -26,11 +26,12 @@ public class motionControl : MonoBehaviour {
 			float tween = 0;
 			while(Vector3.Distance(motionControl.tr.position, next) > 0.5f){
 				motionControl.tr.position = Vector3.Lerp(last, next, tween);
-				yield return new WaitForEndOfFrame();
 				tween += Time.deltaTime * motionControl.s;
+				yield return new WaitForEndOfFrame();
 			}
 			Path.RemoveAt (0);
 		}
+		SaveData.saveMove (new MazeNodeData(x, y), GamePlay.getCounter(), GamePlay.getScore());
 		MazeBuilder.SetClickZone(x, y);
 	}
 }

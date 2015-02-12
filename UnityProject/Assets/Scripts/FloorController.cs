@@ -7,13 +7,15 @@ public class FloorController : MonoBehaviour {
 	public int x, y;
 
 	[SerializeField]
-	private Shade clickableShade, clickingShade, originalShade;
+	private Shade clickableShade = Shade.darkest, 
+				  clickingShade = Shade.darkest, 
+				  originalShade = Shade.darkest;
 	private Shade shade;
 
 	public delegate void watcher();
 	public watcher watch;
 
-	private bool clickable = false;
+//	private bool clickable = false;
 
 	void Awake() {
 		ColorPallet.coloring += Recolor;
@@ -46,14 +48,14 @@ public class FloorController : MonoBehaviour {
 	}
 
 	public void makeClickable() {
-		clickable = true;
+//		clickable = true;
 		shade = clickableShade;
 		Recolor ();
 		watch = click;
 	}
 
 	public void restore() {
-		clickable = false;
+//		clickable = false;
 		shade = originalShade;
 		Recolor ();
 		watch = empty;

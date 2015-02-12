@@ -3,6 +3,9 @@ using System.Collections;
 
 public class data : MonoBehaviour {
 
+	public delegate void Reset();
+	public static event Reset reset; 
+
 	[SerializeField]
 	private int Level = 1,
 	Width = 1, 
@@ -41,6 +44,33 @@ public class data : MonoBehaviour {
 	public static Vector3 cameraOffset;
 
 	void Awake () {
+		reset += ResetData;
+		CallReset();
+	}
+
+	void Start () {
+		DontDestroyOnLoad(this);
+		Application.LoadLevel("main");
+	}
+
+	public static void LoadSavedData(Save saveData) {
+		width = saveData.Width;
+		height = saveData.Height;
+		level = saveData.CurrentLevel;
+		for (int i = 1; i < level; i++)	{
+			if (moveRange < maxMoveRange) {
+				moveRange++;
+			}
+		}
+	}
+
+	public static void CallReset(){
+		if(reset != null) { 
+			reset(); 
+		} 
+	}
+
+	private void ResetData(){
 		level = Level;
 		width = Width;
 		height = Height; 
@@ -55,11 +85,6 @@ public class data : MonoBehaviour {
 		zoomSpeed = ZoomSpeed;
 		cameraZoomOffset = CameraZoomOffset;
 		cameraOffset = CameraOffset;
-	}
-
-	void Start () {
-		DontDestroyOnLoad(this);
-		Application.LoadLevel("main");
 	}
 
 	public static void IncrementData(){

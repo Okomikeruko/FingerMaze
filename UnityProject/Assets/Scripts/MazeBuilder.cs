@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
+using System.Xml.Serialization;
 
 public class MazeBuilder : MonoBehaviour {
-
-	[SerializeField] private GameObject floor, baseFloor, wall, wallParent, floorParent, goal, camera;
+	
+	public GameObject floor, baseFloor, wall, wallParent, floorParent, goal, _camera, hero;
 
 	public static int width = 1, height = 1, moveRange = 5, level = 1;
-	private Vector3 offset;
 	private GameObject o;
 	private CameraControl cam;
 	private static MazeNode start, current;
@@ -21,8 +22,16 @@ public class MazeBuilder : MonoBehaviour {
 
 	void Start () {
 
-		setValues();
+		if(SaveData.GetSave().CurrentLevel >= data.level){
+			BuildTheMaze (SaveData.GetSave ());
+		} else {
+			BuildTheMaze();
+		}
+	}
 
+	public void BuildTheMaze(){
+		setValues();
+		
 		maze = new List<MazeNode>();
 		solution = new List<MazeNode>();
 		toBeginning = new List<MazeNode>();
@@ -30,21 +39,21 @@ public class MazeBuilder : MonoBehaviour {
 		ground = new List<List<GameObject>> ();
 		vertWalls = new List<List<GameObject>> ();
 		horiWalls = new List<List<GameObject>> ();
-		cam = camera.GetComponent<CameraControl> ();
-
+		cam = _camera.GetComponent<CameraControl> ();
+		
 		// ******************** Size Camera **********************
-
-		camera.transform.position = new Vector3 ((width - 1) * 5, (((17F / 3F) * height) - 6), -10);
+		
+		_camera.transform.position = new Vector3 ((width - 1) * 5, (((17F / 3F) * height) - 6), -10);
 		cam.setMax(((17f / 3f) * height) + 1);
-
+		
 		// ******************** Full Grid Build *************************
-
+		
 		if (width > 0 && height > 0) {
 			o = Instantiate (goal, new Vector3((width - 1) * 10, (height - 1) * 10, -1), Quaternion.identity) as GameObject;
 			o = Instantiate (baseFloor, new Vector3((width - 1) * 5, (height - 1 ) * 5, 3), Quaternion.Euler(270, 0, 0)) as GameObject;
 			o.transform.localScale = new Vector3 (width, 1, height);
 			o.transform.parent = floorParent.transform;
-
+			
 			for (int i = 0; i <= width; i++)
 			{
 				List<GameObject> column = new List<GameObject>();
@@ -52,33 +61,33 @@ public class MazeBuilder : MonoBehaviour {
 				List<GameObject> hori = new List<GameObject>();
 				for (int j = 0; j < height; j++)
 				{
-
+					
 					if (i < width){
-			// Floors
+						// Floors
 						o = Instantiate (floor, 
-					                     new Vector3(i * 10, j * 10, 1), 
-					                     Quaternion.Euler(270, 0, 0)) as GameObject;
+						                 new Vector3(i * 10, j * 10, 1), 
+						                 Quaternion.Euler(270, 0, 0)) as GameObject;
 						o.GetComponent<FloorController>().x = i;
 						o.GetComponent<FloorController>().y = j;
 						o.transform.parent = floorParent.transform;
 						column.Add (o);
 						maze.Add (new MazeNode(i,j));
-
-			// Horizontal Walls
+						
+						// Horizontal Walls
 						o = Instantiate (wall, 
 						                 new Vector3(i * 10, (j * 10) - 5, 0), 
 						                 Quaternion.Euler(0, 0, 90)) as GameObject;
 						o.transform.parent = wallParent.transform;
 						hori.Add (o);
 					}
-			// Vertical Walls
+					// Vertical Walls
 					o = Instantiate (wall, 
 					                 new Vector3((i * 10) - 5, j * 10, 0), 
 					                 Quaternion.Euler(0, 0, 0)) as GameObject;
 					o.transform.parent = wallParent.transform;
 					vert.Add (o);
 				}
-			// Top Horizontal Walls
+				// Top Horizontal Walls
 				if (i < width){
 					o = Instantiate (wall, 
 					                 new Vector3(i * 10, (height * 10) - 5, 0), 
@@ -90,21 +99,20 @@ public class MazeBuilder : MonoBehaviour {
 				horiWalls.Add ( hori );
 			}
 		}
-
+		
 		foreach (MazeNode node in maze){
 			node.FindAdjacentNodes(maze);
 		}
-
+		
 		// ***************** Create Maze *******************
 		
 		start = maze[Random.Range(0,maze.Count)];
 		start.start = true;
 		start.makeMaze ();
 		solution = GetSolution(toBeginning, toEnd);
-
-
+		
 		// **************** Delete Walls to Form Maze *******************
-
+		
 		foreach (MazeNode node in maze){
 			if (node.back != null){
 				if (node.back.x != node.x){
@@ -119,16 +127,16 @@ public class MazeBuilder : MonoBehaviour {
 				}
 			}
 		}
-
+		
 		// ***************** Set Remaining Object to Maze Parent Object ***************
-
+		
 		current = maze[0];
 		ClearMaze ();
 		SetClickZone(0, 0);
-
+		
 		ColorPallet.CallRecolor();
 		GamePlay.setRemaining(solution.Count);
-
+		
 		MeshFilter[] meshFilters = wallParent.GetComponentsInChildren<MeshFilter>();
 		CombineInstance[] combine = new CombineInstance[meshFilters.Length-1];
 		int z = 0;
@@ -137,11 +145,165 @@ public class MazeBuilder : MonoBehaviour {
 			if(meshFilters[n].sharedMesh == null) continue;
 			combine[z].mesh = meshFilters[n].sharedMesh;
 			combine[z++].transform = meshFilters[n].transform.localToWorldMatrix;
-			meshFilters[n].gameObject.active = false;
+			meshFilters[n].gameObject.SetActive(false);
 		}
 		wallParent.GetComponent<MeshFilter>().mesh = new Mesh();
 		wallParent.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
 		wallParent.gameObject.SetActive (true);
+		
+		// ****************** Save Maze ***********************************************
+		
+		List<MazeNodeData> mazeData = new List<MazeNodeData>();
+		foreach (MazeNode node in maze){
+			mazeData.Add (node.convertToMazeNodeData());
+		}
+		List<MazeNodeData> solutionData = new List<MazeNodeData>();
+		foreach (MazeNode node in solution){
+			solutionData.Add (node.convertToMazeNodeData());
+		}
+		SaveData.savePuzzle (mazeData, level, solutionData, width, height);
+		SaveData.saveMove (new MazeNodeData(0, 0), GamePlay.getCounter(), GamePlay.getScore());
+	}
+	
+	public void BuildTheMaze(Save saveData){
+		data.LoadSavedData(saveData);
+		setValues();
+		
+		maze = new List<MazeNode>();
+		solution = new List<MazeNode>();
+		toBeginning = new List<MazeNode>();
+		toEnd = new List<MazeNode>();
+		ground = new List<List<GameObject>> ();
+		vertWalls = new List<List<GameObject>> ();
+		horiWalls = new List<List<GameObject>> ();
+		cam = _camera.GetComponent<CameraControl> ();
+		
+		// ******************** Size Camera **********************
+		
+		_camera.transform.position = new Vector3 ((width - 1) * 5, (((17F / 3F) * height) - 6), -10);
+		cam.setMax(((17f / 3f) * height) + 1);
+		
+		// ******************** Full Grid Build *************************
+		
+		if (width > 0 && height > 0) {
+			o = Instantiate (goal, new Vector3((width - 1) * 10, (height - 1) * 10, -1), Quaternion.identity) as GameObject;
+			o = Instantiate (baseFloor, new Vector3((width - 1) * 5, (height - 1 ) * 5, 3), Quaternion.Euler(270, 0, 0)) as GameObject;
+			o.transform.localScale = new Vector3 (width, 1, height);
+			o.transform.parent = floorParent.transform;
+			
+			for (int i = 0; i <= width; i++)
+			{
+				List<GameObject> column = new List<GameObject>();
+				List<GameObject> vert = new List<GameObject>();
+				List<GameObject> hori = new List<GameObject>();
+				for (int j = 0; j < height; j++)
+				{
+					
+					if (i < width){
+						// Floors
+						o = Instantiate (floor, 
+						                 new Vector3(i * 10, j * 10, 1), 
+						                 Quaternion.Euler(270, 0, 0)) as GameObject;
+						o.GetComponent<FloorController>().x = i;
+						o.GetComponent<FloorController>().y = j;
+						o.transform.parent = floorParent.transform;
+						column.Add (o);
+						maze.Add (new MazeNode(i,j));
+						
+						// Horizontal Walls
+						o = Instantiate (wall, 
+						                 new Vector3(i * 10, (j * 10) - 5, 0), 
+						                 Quaternion.Euler(0, 0, 90)) as GameObject;
+						o.transform.parent = wallParent.transform;
+						hori.Add (o);
+					}
+					// Vertical Walls
+					o = Instantiate (wall, 
+					                 new Vector3((i * 10) - 5, j * 10, 0), 
+					                 Quaternion.Euler(0, 0, 0)) as GameObject;
+					o.transform.parent = wallParent.transform;
+					vert.Add (o);
+				}
+				// Top Horizontal Walls
+				if (i < width){
+					o = Instantiate (wall, 
+					                 new Vector3(i * 10, (height * 10) - 5, 0), 
+					                 Quaternion.Euler(0, 0, 90)) as GameObject;
+					o.transform.parent = wallParent.transform;
+				}
+				ground.Add( column );
+				vertWalls.Add ( vert );
+				horiWalls.Add ( hori );
+			}
+		}
+		
+		foreach (MazeNode node in maze){
+			node.FindAdjacentNodes(maze);
+		}
+		
+		// ***************** Create Maze *******************
+
+		for(int i = 0; i < maze.Count; i++){
+			foreach (direction dir in saveData.CurrentMaze[i].dir) {
+				maze[i].forwards.Add ( maze[i].AdjacentNodes[(int)dir] );
+			}
+		}
+
+		foreach (MazeNodeData node in saveData.CurrentSolution){
+			solution.Add(new MazeNode(node.x, node.y));
+		}
+
+		// **************** Delete Walls to Form Maze *******************
+		
+		foreach (MazeNode node in maze){
+			if (node.forwards.Count > 0){
+				foreach (MazeNode forward in node.forwards){
+					if (node.x != forward.x){
+						int x = Mathf.Max(node.x, forward.x);
+						if (vertWalls[x][node.y] != null){ 
+							vertWalls[x][node.y].transform.parent = null;
+							vertWalls[x][node.y].GetComponent<CustomColoring>().removeMe();
+							Destroy (vertWalls[x][node.y]);
+						}
+					}
+					if (node.y != forward.y){
+						int y = Mathf.Max(node.y, forward.y);
+						if (horiWalls[node.x][y] != null){ 
+							horiWalls[node.x][y].transform.parent = null;
+							horiWalls[node.x][y].GetComponent<CustomColoring>().removeMe();
+							Destroy (horiWalls[node.x][y]);
+						}
+					}
+				}
+			}
+		}
+		
+		// ***************** Set Remaining Object to Maze Parent Object ***************
+		
+		current = maze[(saveData.CurrentPosition.x * height) + saveData.CurrentPosition.y];
+		ClearMaze ();
+		SetClickZone(saveData.CurrentPosition.x, saveData.CurrentPosition.y);
+		
+		ColorPallet.CallRecolor();
+		GamePlay.setRemaining(saveData.CurrentRemainingMoves);
+		
+		MeshFilter[] meshFilters = wallParent.GetComponentsInChildren<MeshFilter>();
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length-1];
+		int z = 0;
+		for (int n = 0; n < meshFilters.Length; n++)
+		{
+			if(meshFilters[n].sharedMesh == null) continue;
+			combine[z].mesh = meshFilters[n].sharedMesh;
+			combine[z++].transform = meshFilters[n].transform.localToWorldMatrix;
+			meshFilters[n].gameObject.SetActive(false);
+		}
+		wallParent.GetComponent<MeshFilter>().mesh = new Mesh();
+		wallParent.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+		wallParent.gameObject.SetActive (true);
+
+		// **************** Set Player Starting Position ******************************
+
+		hero.transform.position = new Vector3(current.x, current.y, 0) * 10;
 	}
 
 	public static void SetClickZone(int x, int y)
@@ -203,7 +365,6 @@ public class MazeBuilder : MonoBehaviour {
 					if (output.Exists(n => n.xy == "(" + x + ", " + y + ")"))
 					{
 						return output;
-						break;
 					}
 				}
 			}
@@ -217,26 +378,36 @@ public class MazeBuilder : MonoBehaviour {
 		}
 	}
 
+	public void ResetGame(){
+		ColorPallet.Clear ();
+		GamePlay.ClearCounters();
+		SaveData.reset();
+		data.CallReset();
+		Application.LoadLevel (Application.loadedLevel);
+	}
+
 	private void setValues()
 	{
 		width = data.width;
 		height = data.height;
 		moveRange = data.moveRange;
-		offset = data.cameraOffset; 
 		level = data.level;
 	}
 }
 
+public enum direction { north, east, south, west } 
+
 public class MazeNode {
 
-	enum direction { north, east, south, west }
 
-	public int x, y;
-	public string xy { get{ return "(" + x + ", " + y + ")"; } } 
-	public bool active = true, start = false;
-	public MazeNode[] AdjacentNodes;
-	public List<MazeNode> forwards;
-	public MazeNode back;
+	public bool active = true;
+	public string xy { get { return "(" + x + ", " + y + ")"; } } 
+	public int x {get; set;} 
+	public int y {get; set;}	
+	public bool start = false; 
+	public MazeNode[] AdjacentNodes {get; set;}
+	public List<MazeNode> forwards {get; set;}
+	public MazeNode back {get; set;}
 
 	public MazeNode() {
 		AdjacentNodes = new MazeNode[4];
@@ -253,7 +424,6 @@ public class MazeNode {
 	public void makeMaze() {
 		active = false;
 		List<MazeNode> availableNodes = new List<MazeNode>();
-		List<MazeNode> solution = MazeBuilder.solution;
 		List<MazeNode> toBeginning = MazeBuilder.toBeginning;
 		List<MazeNode> toEnd = MazeBuilder.toEnd;
 		int lastX = MazeBuilder.width - 1;
@@ -353,5 +523,57 @@ public class MazeNode {
 				return direction.west;
 			}
 		}
+	}
+
+	public MazeNodeData convertToMazeNodeData()
+	{
+		MazeNodeData output = new MazeNodeData();
+		output.x = x;
+		output.y = y;
+		List<MazeNode> directions = new List<MazeNode>();
+		directions.Add(back);
+		if (forwards.Count > 0){
+			directions.AddRange(forwards);
+		}
+		foreach (MazeNode node in directions){
+			if (node != null) {
+			    if (output.x == node.x ){
+					if (output.y < node.y){
+						output.dir.Add ( direction.north );
+					}else{
+						output.dir.Add ( direction.south );
+					}
+				} else {
+					if ( output.x < node.x ){
+						output.dir.Add ( direction.east );
+					}else{
+						output.dir.Add ( direction.west );
+					}
+				}
+			}
+		}
+		return output;
+	}
+}
+
+public class MazeNodeData{
+
+	[XmlAttribute("x")]
+	public int x { get; set; }
+
+	[XmlAttribute("y")]
+	public int y { get; set; }
+
+	[XmlElement("Directions")]
+	public List<direction> dir { get; set; }
+
+	public MazeNodeData(){
+		dir = new List<direction>();
+	}
+
+	public MazeNodeData(int a, int b){
+		dir = new List<direction>();
+		x = a;
+		y = b;
 	}
 }
