@@ -1,43 +1,47 @@
 GUI
 	Game Play
-[ Done	]	Setup Scoring System, Display Accurately
-[ Done	]	Setup Move Counting System, Display Accurately
-[ Done	]	Add “High Score” section
-[ Done	]	Fix Pause Button Anchor 
+[ Done ]	Setup Scoring System, Display Accurately
+[ Done ]	Setup Move Counting System, Display Accurately
+[ Done ]	Add “High Score” section
+[ Done ]	Fix Pause Button Anchor 
 	Pause Screen
-[ Done	]	Add functionality to Reset button
-[	]	Arrange buttons
+[ Done ]	Add functionality to Reset button
+[ Done ]	Arrange buttons
 	Reset Screen
-[	]	Confirm (Performs Reset Function)
-[	]	Cancel (Goes back)
+[	 ]	Confirm (Performs Reset Function)
+[	 ]	Cancel (Goes back)
 	Victory/GameLoad Screen
-[	]	Ad Space
-[	]	Loading Bar
-[	]	Start Button
+[	 ]	Ad Space
+[	 ]	Loading Bar
+[	 ]	Start Button
 	Defeat/EndGame Screen
-[ 	]	Ad Space
-[	]	Start Button
+[ 	 ]	Ad Space
+[	 ]	Start Button
 
 Core Mechanics
 	Save Data
 		On Level Start
-[ Done	]		Current Puzzle Layout
-[ Done	]		Current Level Number
+[ Done ]		Current Puzzle Layout
+[ Done ]		Current Level Number
 		On Move
-[ Done	]		Current Position
-[ Done	]		Current Moves Remaining
-[ Done	]		Current Score
+[ Done ]		Current Position
+[ Done ]		Current Moves Remaining
+[ Done ]		Current Score
 		Permanent Data
-[ Done	]		High Score
-[ Done	]		Color Pallet Index
-[ Done	]	Reset Game Function (On reset and/or On defeat)
+[ Done ]		High Score
+[ Done ]		Color Pallet Index
+[ Done ]	Reset Game Function (On reset and/or On defeat)
 	Meshes
 		Replace Meshes with low poly equivalents
-[	]		Floors
-[	]		Walls
-[	]		Goal
-[	]		Hero
+[	 ]		Floors
+[	 ]		Walls
+[	 ]		Goal
+[	 ]		Hero
 	Camera
-[ Do	]	Fix center alignment on zoom out
+[ Do	 ]	Fix center alignment on zoom out
+	Social Media
+[ Do	 ]	Facebook
+[	 ]	Twitter
+[	 ]	Google+
 
 
