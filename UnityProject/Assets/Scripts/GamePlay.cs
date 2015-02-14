@@ -12,6 +12,7 @@ public class GamePlay : MonoBehaviour {
 
 	public delegate void Counters();
 	public static event Counters counters;
+	public static event Counters gameOver;
 
 	private static int counter = 0,	remaining = 0, score = 0;
 	public string FileName;
@@ -39,10 +40,10 @@ public class GamePlay : MonoBehaviour {
 	public static void counterUp(){
 		counter++;
 		int output = remaining - counter;
-		if (output < 0){
-			Debug.Log ("Game Over");
+		if (output < 0 && gameOver != null){
+			ColorPallet.CallRecolor();
+			gameOver();
 		}
-
 	}
 
 	public static void setRemaining(int r) {
@@ -82,7 +83,7 @@ public class GamePlay : MonoBehaviour {
 
 	public static int getHighScore()
 	{
-		return SaveData.GetSave().HighScore;
+		return Mathf.Max(SaveData.GetSave().HighScore, score);
 	}
 }
 

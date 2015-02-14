@@ -69,6 +69,7 @@
      <Compile Include="Assets\Scripts\FacebookManager.cs" />
      <Compile Include="Assets\Scripts\FloorController.cs" />
      <Compile Include="Assets\Scripts\GUICounter.cs" />
+     <Compile Include="Assets\Scripts\GameOverEvent.cs" />
      <Compile Include="Assets\Scripts\GamePlay.cs" />
      <Compile Include="Assets\Scripts\GoalEvent.cs" />
      <Compile Include="Assets\Scripts\MazeBuilder.cs" />
