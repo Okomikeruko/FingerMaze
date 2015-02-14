@@ -73,26 +73,26 @@ public class MazeBuilder : MonoBehaviour {
 						o.transform.parent = floorParent.transform;
 						column.Add (o);
 						maze.Add (new MazeNode(i,j));
-						
+
 						// Horizontal Walls
 						o = Instantiate (wall, 
-						                 new Vector3(i * 10, (j * 10) - 5, 0), 
-						                 Quaternion.Euler(0, 0, 90)) as GameObject;
+						                 new Vector3((i * 10) + 1, (j * 10) - 5, 0), 
+						                 Quaternion.Euler(0, -90, 90)) as GameObject;
 						o.transform.parent = wallParent.transform;
 						hori.Add (o);
 					}
 					// Vertical Walls
 					o = Instantiate (wall, 
-					                 new Vector3((i * 10) - 5, j * 10, 0), 
-					                 Quaternion.Euler(0, 0, 0)) as GameObject;
+					                 new Vector3((i * 10) - 5, (j * 10) - 1, 0), 
+					                 Quaternion.Euler(-90, 0, 0)) as GameObject;
 					o.transform.parent = wallParent.transform;
 					vert.Add (o);
 				}
 				// Top Horizontal Walls
 				if (i < width){
 					o = Instantiate (wall, 
-					                 new Vector3(i * 10, (height * 10) - 5, 0), 
-					                 Quaternion.Euler(0, 0, 90)) as GameObject;
+					                 new Vector3((i * 10) + 1, (height * 10) - 5, 0), 
+					                 Quaternion.Euler(0, -90, 90)) as GameObject;
 					o.transform.parent = wallParent.transform;
 				}
 				ground.Add( column );
@@ -211,27 +211,26 @@ public class MazeBuilder : MonoBehaviour {
 						o.transform.parent = floorParent.transform;
 						column.Add (o);
 						maze.Add (new MazeNode(i,j));
-						
+
 						// Horizontal Walls
 						o = Instantiate (wall, 
-						                 new Vector3(i * 10, (j * 10) - 5, 0), 
-						                 Quaternion.Euler(0, 0, 90)) as GameObject;
+						                 new Vector3((i * 10) + 1, (j * 10) - 5, 0), 
+						                 Quaternion.Euler(0, -90, 90)) as GameObject;
 						o.transform.parent = wallParent.transform;
 						hori.Add (o);
 					}
 					// Vertical Walls
 					o = Instantiate (wall, 
-					                 new Vector3((i * 10) - 5, j * 10, 0), 
-					                 Quaternion.Euler(0, 0, 0)) as GameObject;
+					                 new Vector3((i * 10) - 5, (j * 10) - 1, 0), 
+					                 Quaternion.Euler(-90, 0, 0)) as GameObject;
 					o.transform.parent = wallParent.transform;
 					vert.Add (o);
 				}
 				// Top Horizontal Walls
 				if (i < width){
 					o = Instantiate (wall, 
-					                 new Vector3(i * 10, (height * 10) - 5, 0), 
-					                 Quaternion.Euler(0, 0, 90)) as GameObject;
-					o.transform.parent = wallParent.transform;
+					                 new Vector3((i * 10) + 1, (height * 10) - 5, 0), 
+					                 Quaternion.Euler(0, -90, 90)) as GameObject;
 				}
 				ground.Add( column );
 				vertWalls.Add ( vert );
