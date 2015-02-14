@@ -24,9 +24,19 @@ public class CameraControl : MonoBehaviour {
 		level = data.level;
 		cameraSizeMin = data.cameraSizeMin;
 		zoomSpeed = data.zoomSpeed;
+
+		if(SaveData.GetSave().CurrentLevel >= data.level){
+			setCameraPos(SaveData.GetSave().Width,SaveData.GetSave().Height);
+		}else{
+			setCameraPos(data.width, data.height);
+		}
+	}
+
+	void setCameraPos(int w, int h)
+	{
 		cameraPosMin = new Vector3 (0, 0, -10);
-		cameraPosMax = new Vector3 (data.width * 10, data.height * 10, -10);
-		cameraPosMid = new Vector3 ((data.width - 1) * 5, (((17F / 3F) * data.height) - 6), -10);
+		cameraPosMax = new Vector3 (w * 10, h * 10, -10);
+		cameraPosMid = new Vector3 ((w - 1) * 5, (((17F / 3F) * h) - 6), -10);
 		cameraPosMinScale = cameraPosMaxScale = cameraPosMid;
 	}
 
