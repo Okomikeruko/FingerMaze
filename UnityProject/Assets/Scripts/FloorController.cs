@@ -22,7 +22,7 @@ public class FloorController : MonoBehaviour {
 	}
 
 	void Recolor(){
-		renderer.material.color = ColorPallet.pallet[ColorPallet.i].colors[(int)shade].color;
+		GetComponent<Renderer>().material.color = ColorPallet.pallet[ColorPallet.i].colors[(int)shade].color;
 	}
 
 	void Update(){
@@ -34,7 +34,7 @@ public class FloorController : MonoBehaviour {
 			foreach (MazeNode n in MazeBuilder.solution)
 			{
 				MazeBuilder.ground[n.x][n.y].gameObject.GetComponent<FloorController>().shade = Shade.mid;
-				MazeBuilder.ground[n.x][n.y].renderer.material.color = Color.cyan;
+				MazeBuilder.ground[n.x][n.y].GetComponent<Renderer>().material.color = Color.cyan;
 			}
 		}
 

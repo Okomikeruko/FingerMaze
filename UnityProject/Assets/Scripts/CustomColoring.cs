@@ -16,6 +16,6 @@ public class CustomColoring : MonoBehaviour {
 
 	void setColor()
 	{
-		renderer.material.color = ColorPallet.pallet[ColorPallet.i].colors[(int)shade].color;
+		GetComponent<Renderer>().material.color = ColorPallet.pallet[ColorPallet.i].colors[(int)shade].color;
 	}
 }

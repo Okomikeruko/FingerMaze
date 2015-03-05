@@ -17,7 +17,7 @@ public class CameraControl : MonoBehaviour {
 	}
 
 	void Recolor(){
-		this.camera.backgroundColor = ColorPallet.pallet[ColorPallet.i].colors[(int)shade].color;
+		this.GetComponent<Camera>().backgroundColor = ColorPallet.pallet[ColorPallet.i].colors[(int)shade].color;
 	}
 
 	void Start () {
@@ -63,7 +63,7 @@ public class CameraControl : MonoBehaviour {
 			Vector3 prevCenter = new Vector3((touchOnePrevPos.x + touchZeroPrevPos.x)/2,
 			                             (touchOnePrevPos.y + touchZeroPrevPos.y)/2,
 			                             0);
-			Vector3 centerDiff = (prevCenter - center) * (sensitivity * this.camera.orthographicSize);
+			Vector3 centerDiff = (prevCenter - center) * (sensitivity * this.GetComponent<Camera>().orthographicSize);
 
 			zoom (deltaMagnitudeDiff * -zoomSpeed, centerDiff);
 		}
@@ -72,14 +72,14 @@ public class CameraControl : MonoBehaviour {
 	void zoom(float input, Vector3 Center)
 	{
 		input *= level;
-		float change = this.camera.orthographicSize - input;
-		this.camera.orthographicSize = Mathf.Clamp(change, cameraSizeMin, cameraSizeMax);
+		float change = this.GetComponent<Camera>().orthographicSize - input;
+		this.GetComponent<Camera>().orthographicSize = Mathf.Clamp(change, cameraSizeMin, cameraSizeMax);
 		cameraPosMinScale = Vector3.Lerp (cameraPosMin, 
 		                               cameraPosMid, 
-		                               zoomRatio (this.camera.orthographicSize, cameraSizeMin, cameraSizeMax));
+		                               zoomRatio (this.GetComponent<Camera>().orthographicSize, cameraSizeMin, cameraSizeMax));
 		cameraPosMaxScale = Vector3.Lerp (cameraPosMax, 
 		                                  cameraPosMid, 
-		                                  zoomRatio (this.camera.orthographicSize, cameraSizeMin, cameraSizeMax));
+		                                  zoomRatio (this.GetComponent<Camera>().orthographicSize, cameraSizeMin, cameraSizeMax));
 		pan(Center);
 	}
 
@@ -98,6 +98,6 @@ public class CameraControl : MonoBehaviour {
 
 	public void setMax(float max)
 	{
-		this.camera.orthographicSize = cameraSizeMax = max + data.cameraZoomOffset;
+		this.GetComponent<Camera>().orthographicSize = cameraSizeMax = max + data.cameraZoomOffset;
 	}
 }
