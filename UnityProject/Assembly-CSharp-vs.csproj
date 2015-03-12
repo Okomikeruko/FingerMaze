@@ -46,7 +46,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\AudioControll.cs" />
      <Compile Include="Assets\Extensions\AndroidManifestManager\AN_ManifestManager.cs" />
      <Compile Include="Assets\Extensions\AndroidManifestManager\Models\AN_ActivityTemplate.cs" />
      <Compile Include="Assets\Extensions\AndroidManifestManager\Models\AN_ApplicationTemplate.cs" />
@@ -238,10 +237,12 @@
      <Compile Include="Assets\Facebook\Scripts\IOSFacebook.cs" />
      <Compile Include="Assets\Facebook\Scripts\IOSFacebookLoader.cs" />
      <Compile Include="Assets\Facebook\Scripts\NativeDialogModes.cs" />
+     <Compile Include="Assets\Scripts\AudioControll.cs" />
      <Compile Include="Assets\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Scripts\CanvasElementRecolor.cs" />
      <Compile Include="Assets\Scripts\ColorPallet.cs" />
      <Compile Include="Assets\Scripts\CustomColoring.cs" />
+     <Compile Include="Assets\Scripts\FacebookControl.cs" />
      <Compile Include="Assets\Scripts\FloorController.cs" />
      <Compile Include="Assets\Scripts\GUICounter.cs" />
      <Compile Include="Assets\Scripts\GameOverEvent.cs" />
