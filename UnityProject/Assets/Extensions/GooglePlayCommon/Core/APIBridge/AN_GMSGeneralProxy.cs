@@ -126,7 +126,11 @@ public class AN_GMSGeneralProxy : MonoBehaviour {
 	public static void incrementAchievementById(string achievementId, string numsteps) {
 		CallActivityFunction("incrementAchievementById", achievementId, numsteps);
 	}
-	
+
+	public static void setStepsImmediate(string achievementId, string numsteps) {
+		CallActivityFunction("setStepsImmediate", achievementId, numsteps);
+	}
+
 	public static void loadAchievements() {
 		CallActivityFunction("loadAchievements");
 	}
@@ -158,8 +162,8 @@ public class AN_GMSGeneralProxy : MonoBehaviour {
 	// --------------------------------------
 
 
-	public static void ShowSavedGamesUI_Bridge(string title, int maxNumberOfSavedGamesToShow) {
-		CallActivityFunction("ShowSavedGamesUI_Bridge", title, maxNumberOfSavedGamesToShow);
+	public static void ShowSavedGamesUI_Bridge(string title, int maxNumberOfSavedGamesToShow, bool allowAddButton, bool allowDelete) {
+		CallActivityFunction("ShowSavedGamesUI_Bridge", title, maxNumberOfSavedGamesToShow, allowAddButton, allowDelete);
 	}
 	
 	public static void CreateNewSpanshot_Bridge(string name, string description, string ImageData, string Data, long PlayedTime) {

@@ -1,4 +1,25 @@
-5.2:
+6.7:
+Google+ Sharing fix. MSPAndroidSocialGate.StartShareIntent is deprecated for now, use MSPAndroidSocialGate.StartGooglePlusShare instead
+Compatibility update
+
+6.6:
+Compatibility update
+
+6.5:
+New features:
+Now, if you need to use text sharing only, SD card permission will not be added
+
+Fixes:
+'bimagechooser' folder is removed for now
+Remove Camera image from Gallery after transfering to Unity options added
+
+6.4:
+MSP_OpenAppInStore PlayMaker action added
+
+6.3:
+Compatibility update
+
+6.2:
 Unity 5 support added
 
 5.1:
@@ -10,7 +31,7 @@ Mobile Social does not overrides main activity anymore
 
 4.3:
 Twitter image posting fixed
-Facebook Game Gifting API. Reade more: http://goo.gl/uhxaLf 
+Facebook Game Gifting API. Reade more: http://goo.gl/uhxaLf
 Facebook Trun Based Notifications: Read more:http://goo.gl/sZNJDU
 
 4.2:
@@ -25,7 +46,7 @@ Manifest auto Generation
 
 3.9:
 iPad sharing bug fixed
-Editor improvements 
+Editor improvements
 
 
 3.8:
@@ -53,7 +74,7 @@ SPTwitter  C# Actions Added
 3.5:
 Duplicate on deploy fixed
 Native Sharing on android now will use Local Storage
-if External Storage is not available 
+if External Storage is not available
 
 
 3.4:
@@ -115,7 +136,7 @@ Assets/Plugins/Android - > Assets/StansAssets/Plugins/Android
 
 2.8:
 Code Refactor:
-Removed: 
+Removed:
 Assets/Extensions/MobileSocialPlugin/Scripts/Android/Twitter
 Assets/Plugins/IOS/Unity3d.m
 Assets/Plugins/IOS/Unity3d.h
@@ -152,4 +173,4 @@ Android Native Compatibility update
 Native posting added
 GUI updated
 FB app request added
-Unity 4.5 cpmpatibility 
+Unity 4.5 cpmpatibility

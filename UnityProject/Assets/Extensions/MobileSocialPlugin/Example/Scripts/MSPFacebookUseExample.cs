@@ -16,7 +16,7 @@ public class MSPFacebookUseExample : MonoBehaviour {
 	
 	private static bool IsUserInfoLoaded = false;
 	private static bool IsFrindsInfoLoaded = false;
-	private static bool IsAuntifivated = false;
+	private static bool IsAuntificated = false;
 	
 	
 	
@@ -45,29 +45,25 @@ public class MSPFacebookUseExample : MonoBehaviour {
 	
 	
 	void Awake() {
+
+
+		SPFacebook.instance.OnInitCompleteAction += OnInit;
+		SPFacebook.instance.OnFocusChangedAction += OnFocusChanged;
+
+
+		SPFacebook.instance.OnAuthCompleteAction += OnAuth;
+
+		
+		SPFacebook.instance.OnPostingCompleteAction += OnPost;
 		
 		
-		SPFacebook.instance.addEventListener(FacebookEvents.FACEBOOK_INITED, 			 OnInit);
-		SPFacebook.instance.addEventListener(FacebookEvents.AUTHENTICATION_SUCCEEDED,  	 OnAuth);
-		
-		
-		SPFacebook.instance.addEventListener(FacebookEvents.USER_DATA_LOADED,  			OnUserDataLoaded);
-		SPFacebook.instance.addEventListener(FacebookEvents.USER_DATA_FAILED_TO_LOAD,   OnUserDataLoadFailed);
-		
-		SPFacebook.instance.addEventListener(FacebookEvents.FRIENDS_DATA_LOADED,  			OnFriendsDataLoaded);
-		SPFacebook.instance.addEventListener(FacebookEvents.FRIENDS_FAILED_TO_LOAD,   		OnFriendDataLoadFailed);
-		
-		SPFacebook.instance.addEventListener(FacebookEvents.POST_FAILED,  			OnPostFailed);
-		SPFacebook.instance.addEventListener(FacebookEvents.POST_SUCCEEDED,   		OnPost);
-		
-		
-		SPFacebook.instance.addEventListener(FacebookEvents.GAME_FOCUS_CHANGED,   OnFocusChanged);
+	
 		
 		//scores Api events
-		SPFacebook.instance.addEventListener(FacebookEvents.PLAYER_SCORES_REQUEST_COMPLETE,   OnPlayerScoreRequestComplete);
-		SPFacebook.instance.addEventListener(FacebookEvents.APP_SCORES_REQUEST_COMPLETE,   	  OnAppScoreRequestComplete);
-		SPFacebook.instance.addEventListener(FacebookEvents.SUBMIT_SCORE_REQUEST_COMPLETE,    OnSubmitScoreRequestComplete);
-		SPFacebook.instance.addEventListener(FacebookEvents.DELETE_SCORES_REQUEST_COMPLETE,   OnDeleteScoreRequestComplete);
+		SPFacebook.instance.OnPlayerScoresRequestCompleteAction += OnPlayerScoreRequestComplete; 
+		SPFacebook.instance.OnAppScoresRequestCompleteAction += OnAppScoreRequestComplete; 
+		SPFacebook.instance.OnSubmitScoreRequestCompleteAction += OnSubmitScoreRequestComplete; 
+		SPFacebook.instance.OnDeleteScoresRequestCompleteAction += OnDeleteScoreRequestComplete; 
 		
 		
 		
@@ -82,7 +78,7 @@ public class MSPFacebookUseExample : MonoBehaviour {
 	}
 	
 	void FixedUpdate() {
-		if(IsAuntifivated) {
+		if(IsAuntificated) {
 			connectButton.text = "Disconnect";
 			Name.text = "Player Connected";
 			foreach(DefaultPreviewButton btn in ConnectionDependedntButtons) {
@@ -191,7 +187,7 @@ public class MSPFacebookUseExample : MonoBehaviour {
 	
 	
 	private void Connect() {
-		if(!IsAuntifivated) {
+		if(!IsAuntificated) {
 			SPFacebook.instance.Login("email,publish_actions");
 			SA_StatusBar.text = "Log in...";
 		} else {
@@ -200,7 +196,9 @@ public class MSPFacebookUseExample : MonoBehaviour {
 		}
 	}
 	
+
 	private void LoadUserData() {
+		SPFacebook.instance.OnUserDataRequestCompleteAction += OnUserDataLoaded;
 		SPFacebook.instance.LoadUserData();
 		SA_StatusBar.text = "Loadin user data..";
 	}
@@ -221,9 +219,14 @@ public class MSPFacebookUseExample : MonoBehaviour {
 		StartCoroutine(PostScreenshot());
 		SA_StatusBar.text = "Positng..";
 	}
-	
+
+
 	private void LoadFriends() {
-		SPFacebook.instance.LoadFrientdsInfo(5);
+		
+		SPFacebook.instance.OnFriendsDataRequestCompleteAction += OnFriendsDataLoaded;
+		
+		int limit = 5;
+		SPFacebook.instance.LoadFrientdsInfo(limit);
 		SA_StatusBar.text = "Loading friends..";
 	}
 	
@@ -290,8 +293,9 @@ public class MSPFacebookUseExample : MonoBehaviour {
 	}
 
 	
-	private void OnFocusChanged(CEvent e) {
-		bool focus = (bool) e.data;
+	private void OnFocusChanged(bool focus) {
+		
+		Debug.Log("FB OnFocusChanged: " + focus);
 		
 		if (!focus)  {                                                                                        
 			// pause the game - we will need to hide                                             
@@ -303,62 +307,83 @@ public class MSPFacebookUseExample : MonoBehaviour {
 	}
 	
 	
-	private void OnUserDataLoadFailed() {
-		SA_StatusBar.text ="Opps, user data load failed, something was wrong";
-		Debug.Log("Opps, user data load failed, something was wrong");
-	}
-	
-	
-	private void OnUserDataLoaded() {
-		SA_StatusBar.text = "User data loaded";
-		IsUserInfoLoaded = true;
-		SPFacebook.instance.userInfo.LoadProfileImage(FacebookProfileImageSize.square);
-	}
-	
-	private void OnFriendDataLoadFailed() {
-		SA_StatusBar.text = "Opps, friends data load failed, something was wrong";
-		Debug.Log("Opps, friends data load failed, something was wrong");
-	}
-	
-	private void OnFriendsDataLoaded() {
-		SA_StatusBar.text = "Friends data loaded";
-		foreach(FacebookUserInfo friend in SPFacebook.instance.friendsList) {
-			friend.LoadProfileImage(FacebookProfileImageSize.square);
+	private void OnUserDataLoaded(FBResult result) {
+		
+		SPFacebook.instance.OnUserDataRequestCompleteAction -= OnUserDataLoaded;
+		
+		if (result.Error == null)  { 
+			SA_StatusBar.text = "User data loaded";
+			IsUserInfoLoaded = true;
+			
+			//user data available, we can get info using
+			//SPFacebook.instance.userInfo getter
+			//and we can also use userInfo methods, for exmple download user avatar image
+			SPFacebook.instance.userInfo.LoadProfileImage(FacebookProfileImageSize.square);
+			
+			
+		} else {
+			SA_StatusBar.text ="Opps, user data load failed, something was wrong";
+			Debug.Log("Opps, user data load failed, something was wrong");
 		}
 		
-		IsFrindsInfoLoaded = true;
+	}
+	
+	private void OnFriendsDataLoaded(FBResult res) {
+		SPFacebook.instance.OnFriendsDataRequestCompleteAction -= OnFriendsDataLoaded;
+		
+		if(res.Error == null) {
+			//friednds data available, we can get it using
+			//SPFacebook.instance.friendsList getter
+			//and we can also use FacebookUserInfo methods, for exmple download user avatar image
+			
+			foreach(FacebookUserInfo friend in SPFacebook.instance.friendsList) {
+				friend.LoadProfileImage(FacebookProfileImageSize.square);
+			}
+			
+			IsFrindsInfoLoaded = true;
+		} else {
+			Debug.Log("Opps, friends data load failed, something was wrong");
+		}
 	}
 	
 	
 	
 	
 	private void OnInit() {
-		
 		if(SPFacebook.instance.IsLoggedIn) {
-			OnAuth();
+			IsAuntificated = true;
 		} else {
 			SA_StatusBar.text = "user Login -> fale";
 		}
 	}
 	
 	
-	private void OnAuth() {
-		IsAuntifivated = true;
-		SA_StatusBar.text = "user Login -> true";
+	private void OnAuth(FBResult result) {
+		if(SPFacebook.instance.IsLoggedIn) {
+			IsAuntificated = true;
+			SA_StatusBar.text = "user Login -> true";
+		} else {
+			Debug.Log("Failed to log in");
+		}
+		
 	}
+
+
 	
-	private void OnPost() {
-		SA_StatusBar.text = "Posting complete";
-	}
-	
-	private void OnPostFailed() {
-		SA_StatusBar.text = "Opps, post failed, something was wrong";
-		Debug.Log("Opps, post failed, something was wrong");
+	private void OnPost(FBPostResult res) {
+		
+		if(res.IsSucceeded) {
+			Debug.Log("Posting complete");
+			Debug.Log("Posy id: " + res.PostId);
+			SA_StatusBar.text = "Posting complete";
+		} else {
+			SA_StatusBar.text = "Oops, post failed, something was wrong";
+			Debug.Log("Oops, post failed, something was wrong");
+		}
 	}
 	
 	//scores Api events
-	private void OnPlayerScoreRequestComplete(CEvent e) {
-		FB_APIResult result = e.data as FB_APIResult;
+	private void OnPlayerScoreRequestComplete(FB_APIResult result) {
 		
 		if(result.IsSucceeded) {
 			string msg = "Player has scores in " + SPFacebook.instance.userScores.Count + " apps" + "\n";
@@ -372,8 +397,7 @@ public class MSPFacebookUseExample : MonoBehaviour {
 		
 	}
 	
-	private void OnAppScoreRequestComplete(CEvent e) {
-		FB_APIResult result = e.data as FB_APIResult;
+	private void OnAppScoreRequestComplete(FB_APIResult result) {
 		
 		if(result.IsSucceeded) {
 			string msg = "Loaded " + SPFacebook.instance.appScores.Count + " scores results" + "\n";
@@ -386,9 +410,9 @@ public class MSPFacebookUseExample : MonoBehaviour {
 		
 	}
 	
-	private void OnSubmitScoreRequestComplete(CEvent e) {
+	private void OnSubmitScoreRequestComplete(FB_APIResult result) {
 		
-		FB_APIResult result = e.data as FB_APIResult;
+		
 		if(result.IsSucceeded) {
 			string msg = "Score successfully submited" + "\n";
 			msg += "Current Player Score = " + SPFacebook.instance.GetScoreByUserId(FB.UserId);
@@ -401,8 +425,7 @@ public class MSPFacebookUseExample : MonoBehaviour {
 		
 	}
 	
-	private void OnDeleteScoreRequestComplete(CEvent e) {
-		FB_APIResult result = e.data as FB_APIResult;
+	private void OnDeleteScoreRequestComplete(FB_APIResult result) {
 		if(result.IsSucceeded) {
 			string msg = "Score successfully deleted" + "\n";
 			msg += "Current Player Score = " + SPFacebook.instance.GetScoreByUserId(FB.UserId);
@@ -450,7 +473,7 @@ public class MSPFacebookUseExample : MonoBehaviour {
 	private void LogOut() {
 		IsUserInfoLoaded = false;
 		
-		IsAuntifivated = false;
+		IsAuntificated = false;
 		
 		SPFacebook.instance.Logout();
 	}

@@ -12,7 +12,10 @@ public class AN_SocialSharingProxy {
 	// --------------------------------------
 	// Social
 	// --------------------------------------
-	
+
+	public static void StartGooglePlusShareIntent(string text, string media) {
+		CallActivityFunction("StartGooglePlusShare", text, media);
+	}
 	
 	public static void StartShareIntent(string caption, string message,  string subject, string filters) {
 		CallActivityFunction("StartShareIntent", caption, message, subject, filters);

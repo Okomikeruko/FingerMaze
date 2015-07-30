@@ -13,6 +13,10 @@ public class SocialPlatfromSettingsEditor : Editor {
 
 	static GUIContent TConsumerKey   = new GUIContent("API Key [?]:", "Twitter register app consumer key");
 	static GUIContent TConsumerSecret   = new GUIContent("API Secret [?]:", "Twitter register app consumer secret");
+
+	static GUIContent TAccessToken   = new GUIContent("Access Token [?]:", "Twitter Access Token for editor testing only");
+	static GUIContent TAccessTokenSecret   = new GUIContent("Access Token Secret [?]:", "Twitter Access Token Secret for editor testing only");
+
 	static GUIContent FBdkVersion   = new GUIContent("Facebook SDK Version [?]", "Version of Unity Facebook SDK Plugin");
 
 	
@@ -246,6 +250,10 @@ public class SocialPlatfromSettingsEditor : Editor {
 		SocialPlatfromSettings.Instance.NativeSharingAPI = EditorGUILayout.Toggle("Native Sharing",  SocialPlatfromSettings.Instance.NativeSharingAPI);
 		SocialPlatfromSettings.Instance.InstagramAPI = EditorGUILayout.Toggle("Instagram",  SocialPlatfromSettings.Instance.InstagramAPI);
 		EditorGUILayout.EndHorizontal();
+
+		EditorGUILayout.BeginHorizontal();
+		SocialPlatfromSettings.Instance.EnableImageSharing = EditorGUILayout.Toggle("Image Sharing",  SocialPlatfromSettings.Instance.EnableImageSharing);
+		EditorGUILayout.EndHorizontal();
 	}
 
 	public static void UpdateManifest() {
@@ -282,7 +290,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 			AN_ActivityTemplate act = entry.Value;
 			AN_PropertyTemplate intent = act.GetIntentFilterWithName("android.intent.action.VIEW");
 			if(intent != null) {
-				AN_PropertyTemplate data = intent.GetPropertyWithTag("data");
+				AN_PropertyTemplate data = intent.GetOrCreatePropertyWithTag("data");
 				if(data.GetValue("android:scheme") == "oauth") {
 					act.RemoveProperty(intent);
 				}
@@ -474,6 +482,7 @@ public class SocialPlatfromSettingsEditor : Editor {
 
 			if(GUILayout.Button("Reinstall",  GUILayout.Width(160))) {
 				PluginsInstalationUtil.Android_UpdatePlugin();
+				PluginsInstalationUtil.IOS_UpdatePlugin();
 				UpdateVersionInfo();
 				
 			}
@@ -572,6 +581,26 @@ public class SocialPlatfromSettingsEditor : Editor {
 		SocialPlatfromSettings.Instance.TWITTER_CONSUMER_SECRET	 	= EditorGUILayout.TextField(SocialPlatfromSettings.Instance.TWITTER_CONSUMER_SECRET);
 		SocialPlatfromSettings.Instance.TWITTER_CONSUMER_SECRET	 	= SocialPlatfromSettings.Instance.TWITTER_CONSUMER_SECRET.Trim();
 		EditorGUILayout.EndHorizontal();
+
+			EditorGUI.indentLevel++;
+			SocialPlatfromSettings.Instance.ShowEditorOauthTestingBlock = EditorGUILayout.Foldout(SocialPlatfromSettings.Instance.ShowEditorOauthTestingBlock, "OAuth Testing In Editor");
+			if(SocialPlatfromSettings.Instance.ShowEditorOauthTestingBlock) {
+
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField(TAccessToken);
+				SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN	 	= EditorGUILayout.TextField(SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN);
+				SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN 		= SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN.Trim();
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.LabelField(TAccessTokenSecret);
+				SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN_SECRET	 	= EditorGUILayout.TextField(SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN_SECRET);
+				SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN_SECRET	 	= SocialPlatfromSettings.Instance.TWITTER_ACCESS_TOKEN_SECRET.Trim();
+				EditorGUILayout.EndHorizontal();
+		
+			}
+
+			EditorGUI.indentLevel--;
 	}
 
 

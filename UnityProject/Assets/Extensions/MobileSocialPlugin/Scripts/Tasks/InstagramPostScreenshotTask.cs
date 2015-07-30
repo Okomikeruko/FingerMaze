@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using UnionAssets.FLE;
+using System;
 using System.Collections;
 
 public class InstagramPostScreenshotTask : EventDispatcher {
+
+	public Action<InstagramPostResult> OnPostScreenshotCompleteAction = delegate {};
 
 	private string text;
 
@@ -27,13 +30,17 @@ public class InstagramPostScreenshotTask : EventDispatcher {
 		// Read screen contents into the texture
 		tex.ReadPixels( new Rect(0, 0, width, height), 0, 0 );
 		tex.Apply();
-		
+
+		SPInstagram.instance.OnPostingCompleteAction += OnPostingCompleteAction;
 		SPInstagram.instance.Share(tex, text);
 
 		Destroy(tex);
-		dispatch(BaseEvent.COMPLETE);
-		
 	}
 	
+	void OnPostingCompleteAction (InstagramPostResult res) {
+		SPInstagram.instance.OnPostingCompleteAction -= OnPostingCompleteAction;
+		OnPostScreenshotCompleteAction (res);
 
+		dispatch(BaseEvent.COMPLETE);
+	}
 }

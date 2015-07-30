@@ -23,21 +23,14 @@ public class MSPIOSSocialManager : EventDispatcher {
 
 	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 	[DllImport ("__Internal")]
-	private static extern void _MSP_TwPost(string text);
+	private static extern void _MSP_TwPost(string text, string url, string encodedMedia);
 	
 	[DllImport ("__Internal")]
-	private static extern void _MSP_TwPostWithMedia(string text, string encodedMedia);
+	private static extern void _MSP_FbPost(string text, string url, string encodedMedia);
 	
-
-	[DllImport ("__Internal")]
-	private static extern void _MSP_FbPost(string text);
-	
-	[DllImport ("__Internal")]
-	private static extern void _MSP_FbPostWithMedia(string text, string encodedMedia);
-
 	[DllImport ("__Internal")]
 	private static extern void _MSP_MediaShare(string text, string encodedMedia);
-
+	
 	[DllImport ("__Internal")]
 	private static extern void _MSP_SendMail(string subject, string body,  string recipients, string encodedMedia);
 
@@ -79,48 +72,59 @@ public class MSPIOSSocialManager : EventDispatcher {
 			if(texture != null) {
 				byte[] val = texture.EncodeToPNG();
 				string bytesString = System.Convert.ToBase64String (val);
-				_MSP_MediaShare(text, bytesString);
+			_MSP_MediaShare(text, bytesString);
 			} else {
-				_MSP_MediaShare(text, "");
+			_MSP_MediaShare(text, "");
 			}
 		#endif
 	}
 
-	public void TwitterPost(string text) {
-		TwitterPost(text, null);
-	}
-
-
-	public void TwitterPost(string text, Texture2D texture) {
+	public void TwitterPost(string text, string url = null, Texture2D texture = null) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-
-		if(texture == null) {
-			_MSP_TwPost(text);
-		} else {
-			byte[] val = texture.EncodeToPNG();
-			string bytesString = System.Convert.ToBase64String (val);
-			_MSP_TwPostWithMedia(text, bytesString);
+		if(text == null) {
+			text = "";
 		}
+		
+		if(url == null) {
+			url = "";
+		}
+		
+		string encodedMedia = "";
+		
+		if(texture != null) {
+			byte[] val = texture.EncodeToPNG();
+			encodedMedia = System.Convert.ToBase64String (val);
+		}
+		
+		
+		_MSP_TwPost(text, url, encodedMedia);
 		#endif
-
-	}
-
-
-	public void FacebookPost(string text) {
-		FacebookPost(text, null);
 	}
 	
-	public void FacebookPost(string text, Texture2D texture) {
+	
+	
+	public void FacebookPost(string text, string url = null, Texture2D texture = null) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		if(texture == null) {
-			_MSP_FbPost(text);
-		} else {
-			byte[] val = texture.EncodeToPNG();
-			string bytesString = System.Convert.ToBase64String (val);
-			_MSP_FbPostWithMedia(text, bytesString);
+		if(text == null) {
+			text = "";
 		}
+		
+		if(url == null) {
+			url = "";
+		}
+		
+		string encodedMedia = "";
+		
+		if(texture != null) {
+			byte[] val = texture.EncodeToPNG();
+			encodedMedia = System.Convert.ToBase64String (val);
+		}
+		
+		
+		_MSP_FbPost(text, url, encodedMedia);
 		#endif
 	}
+
 
 
 	public void SendMail(string subject, string body, string recipients) {

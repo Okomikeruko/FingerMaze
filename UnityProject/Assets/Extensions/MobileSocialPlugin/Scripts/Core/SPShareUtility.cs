@@ -13,7 +13,7 @@ public class SPShareUtility  {
 			MSPAndroidSocialGate.StartShareIntent("Share", status, texture, "twi");
 			break;
 		case RuntimePlatform.IPhonePlayer:
-			MSPIOSSocialManager.instance.TwitterPost(status, texture);
+			MSPIOSSocialManager.instance.TwitterPost(status, null, texture);
 			break;
 		}
 	}
@@ -29,7 +29,7 @@ public class SPShareUtility  {
 			MSPAndroidSocialGate.StartShareIntent("Share", message, texture, "facebook.katana");
 			break;
 		case RuntimePlatform.IPhonePlayer:
-			MSPIOSSocialManager.instance.FacebookPost(message, texture);
+			MSPIOSSocialManager.instance.FacebookPost(message, null, texture);
 			break;
 		}
 	}
