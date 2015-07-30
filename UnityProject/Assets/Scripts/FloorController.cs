@@ -42,7 +42,7 @@ public class FloorController : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
-		if (Input.touchCount == 1){
+		if (Input.touchCount == 1 || Input.GetMouseButtonDown(0)){
 			watch();
 		}
 	}

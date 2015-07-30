@@ -12,5 +12,6 @@ public class GameOverEvent : MonoBehaviour {
 	void GameOver()
 	{
 		GameOverScreen.SetActive(true);
+		GamePlay.gameOver -= GameOver;
 	}
 }

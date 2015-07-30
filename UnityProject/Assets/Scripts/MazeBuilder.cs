@@ -21,7 +21,6 @@ public class MazeBuilder : MonoBehaviour {
 
 
 	void Start () {
-
 		if(SaveData.GetSave().CurrentLevel >= data.level){
 			BuildTheMaze (SaveData.GetSave ());
 		} else {
@@ -385,6 +384,7 @@ public class MazeBuilder : MonoBehaviour {
 		ColorPallet.Clear ();
 		GamePlay.ClearCounters();
 		GamePlay.ZeroCounter();
+		GamePlay.ClearVictory();
 		SaveData.reset();
 		data.CallReset();
 		Application.LoadLevel (Application.loadedLevel);

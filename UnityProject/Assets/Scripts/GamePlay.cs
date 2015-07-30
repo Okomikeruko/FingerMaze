@@ -14,6 +14,9 @@ public class GamePlay : MonoBehaviour {
 	public static event Counters counters;
 	public static event Counters gameOver;
 
+	public delegate void Bools(bool b);
+	public static event Bools victory;
+
 	private static int counter = 0,	remaining = 0, score = 0;
 	public string FileName;
 
@@ -44,6 +47,17 @@ public class GamePlay : MonoBehaviour {
 			ColorPallet.CallRecolor();
 			gameOver();
 		}
+	}
+
+	public static void CallVictory(bool b) {
+		if (victory != null) {
+			ColorPallet.CallRecolor();
+			victory(b);
+		}
+	}
+
+	public static void ClearVictory() {
+		victory = null;
 	}
 
 	public static void setRemaining(int r) {
