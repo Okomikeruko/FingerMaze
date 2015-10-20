@@ -114,8 +114,12 @@ public static class SaveData {
 
 	public static void SetupSave(string fileName)
 	{
-		_Location = Application.dataPath + "\\XML";
-		_FileName = fileName;
+		_Location = Path.Combine (Application.dataPath, "XML");
+
+#if UNITY_IOS
+		_Location = Application.persistentDataPath;
+#endif
+		_FileName = Path.Combine (_Location, fileName);
 		LoadFromXml();
 		if(_Data.ToString () != "")
 		{
@@ -199,7 +203,7 @@ public static class SaveData {
 	{
 		string saveData = SerializeObject (save);
 		StreamWriter writer;
-		FileInfo t = new FileInfo(_Location + "\\" +_FileName);
+		FileInfo t = new FileInfo(_FileName);
 		if (!t.Exists){
 			writer = t.CreateText();
 		} else {
@@ -212,10 +216,16 @@ public static class SaveData {
 
 	static void LoadFromXml()
 	{
-		StreamReader r = File.OpenText(_Location + "\\" + _FileName);
-		string info = r.ReadToEnd();
-		r.Close();
-		_Data = info;
+		if (File.Exists (_FileName)) {
+			StreamReader r =  File.OpenText (_FileName);
+			string info = r.ReadToEnd ();
+			r.Close ();
+			_Data = info;
+		} else {
+			FileStream f = File.Create(_FileName);
+			f.Close();
+			_Data = "";
+		}
 	}
 }
 
