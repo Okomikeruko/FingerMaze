@@ -1,12 +1,15 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Serialization;
+//using System.Xml;
+//using System.Xml.Serialization;
+using Newtonsoft.Json;
+using AOT;
 
 public class GamePlay : MonoBehaviour {
 
@@ -20,7 +23,9 @@ public class GamePlay : MonoBehaviour {
 	private static int counter = 0,	remaining = 0, score = 0;
 	public string FileName;
 
-	void Start()
+
+
+	void Awake()
 	{
 		SaveData.SetupSave(FileName);
 	}
@@ -99,6 +104,7 @@ public class GamePlay : MonoBehaviour {
 	{
 		return Mathf.Max(SaveData.GetSave().HighScore, score);
 	}
+
 }
 
 public static class SaveData {
@@ -112,15 +118,27 @@ public static class SaveData {
 		return save;
 	}
 
+
 	public static void SetupSave(string fileName)
 	{
-		_Location = Application.dataPath + "\\XML";
+#if  UNITY_EDITOR_OSX 
+		_Location = Path.Combine(Application.dataPath, "Resources");
+#elif UNITY_IOS
+		_Location = Application.persistentDataPath;
+#else
+		_Location = Application.dataPath + slash + "Resources";
+#endif
 		_FileName = fileName;
-		LoadFromXml();
-		if(_Data.ToString () != "")
-		{
-			save = (Save)DeserializeObject(_Data);
-		}else{
+		if (File.Exists (Path.Combine (_Location, _FileName))) {
+			LoadFromJson();
+			if(_Data.ToString () != "")
+			{
+				save = (Save)JavaScriptConvert.DeserializeObject(_Data, typeof(Save));
+			}else{
+				save = new Save();
+			}
+		} else {
+			File.Create (Path.Combine (_Location, _FileName));
 			save = new Save();
 		}
 	}
@@ -132,7 +150,7 @@ public static class SaveData {
 		save.CurrentSolution = solution;
 		save.Width = width;
 		save.Height = height;
-		SaveToXml();
+		SaveToJson();
 	}
 	
 	public static void saveMove(MazeNodeData position, int moves, int score)
@@ -144,12 +162,12 @@ public static class SaveData {
 		{
 			save.HighScore = save.CurrentScore;
 		}
-		SaveToXml();
+		SaveToJson();
 	}
 	public static void saveColor(int colorIndex)
 	{
 		save.ColorIndex = colorIndex;
-		SaveToXml();
+		SaveToJson();
 	}
 
 	public static void reset()
@@ -159,9 +177,37 @@ public static class SaveData {
 		save = new Save();
 		save.HighScore = h;
 		save.ColorIndex = i;
-		SaveToXml();
+		SaveToJson();
 	}
 
+	public static void SaveToJson (){
+		JsonSerializer serializer = new JsonSerializer ();
+		serializer.NullValueHandling = NullValueHandling.Ignore;
+
+		using (StreamWriter sw = new StreamWriter(@""+ Path.Combine(_Location,_FileName)))
+		using (JsonWriter writer = new JsonTextWriter(sw))
+
+		serializer.Serialize (writer, save);
+/*		string saveData = JavaScriptConvert.SerializeObject (save);
+		StreamWriter writer;
+		FileInfo t = new FileInfo(Path.Combine (_Location, _FileName));
+		if (!t.Exists) {
+				writer = t.CreateText ();
+		} else {
+				t.Delete ();
+				writer = t.CreateText ();
+		}
+		writer.Write (saveData);
+		writer.Close ();*/
+	}
+
+	public static void LoadFromJson(){
+		StreamReader reader = File.OpenText (Path.Combine (_Location, _FileName));
+		string info = reader.ReadToEnd ();
+		reader.Close ();
+		_Data = info;
+	}
+/*
 	static byte[] StringToUTF8ByteArray(string pXmlString)
 	{
 		UTF8Encoding encoding = new UTF8Encoding();
@@ -199,7 +245,7 @@ public static class SaveData {
 	{
 		string saveData = SerializeObject (save);
 		StreamWriter writer;
-		FileInfo t = new FileInfo(_Location + "\\" +_FileName);
+		FileInfo t = new FileInfo(Path.Combine (_Location, _FileName));
 		if (!t.Exists){
 			writer = t.CreateText();
 		} else {
@@ -212,44 +258,56 @@ public static class SaveData {
 
 	static void LoadFromXml()
 	{
-		StreamReader r = File.OpenText(_Location + "\\" + _FileName);
+		StreamReader r = File.OpenText(Path.Combine (_Location, _FileName));
 		string info = r.ReadToEnd();
 		r.Close();
 		_Data = info;
 	}
+	*/
 }
 
-[XmlRoot("root")]
+//[XmlRoot("root")]
+[JsonObject(MemberSerialization.OptIn)]
 public class Save {
 
-	[XmlAttribute("C")]
+//	[XmlAttribute("C")]
+	[JsonProperty] 
 	public int ColorIndex { get; set;}
 
-	[XmlElement("MN")]
+//	[XmlElement("MN")]
+	[JsonProperty]
 	public List<MazeNodeData> CurrentMaze { get; set;  }
 
-	[XmlAttribute("Lvl")]
+//	[XmlAttribute("Lvl")]
+	[JsonProperty]
 	public int CurrentLevel { get; set; }
 
-	[XmlAttribute("w")]
+//	[XmlAttribute("w")]
+	[JsonProperty]
 	public int Width { get; set; }
 
-	[XmlAttribute("h")]
+//	[XmlAttribute("h")]
+	[JsonProperty]
 	public int Height { get; set; }
 
-	[XmlElement("SN")]
+//	[XmlElement("SN")]
+	[JsonProperty]
 	public List<MazeNodeData> CurrentSolution { get; set; }
 
-	[XmlElement("P")] 
+//	[XmlElement("P")] 
+	[JsonProperty]
 	public MazeNodeData CurrentPosition { get; set; }
 
-	[XmlElement("R")]
+//	[XmlElement("R")]
+	[JsonProperty]
 	public int CurrentRemainingMoves { get; set; }
 
-	[XmlElement("S")]
+//	[XmlElement("S")]
+	[JsonProperty]
 	public int CurrentScore { get; set; }
 
-	[XmlElement("H")]
+//	[XmlElement("H")]
+	[JsonProperty]
 	public int HighScore { get; set; }
 	
 	public Save(){ 

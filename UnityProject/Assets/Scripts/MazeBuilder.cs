@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
-using System.Xml.Serialization;
+//using System.Xml;
+//using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 public class MazeBuilder : MonoBehaviour {
 	
@@ -560,15 +561,19 @@ public class MazeNode {
 	}
 }
 
+[JsonObject(MemberSerialization.OptIn)]
 public class MazeNodeData{
 
-	[XmlAttribute("x")]
+//	[XmlAttribute("x")]
+	[JsonProperty]
 	public int x { get; set; }
 
-	[XmlAttribute("y")]
+//	[XmlAttribute("y")]
+	[JsonProperty]
 	public int y { get; set; }
 
-	[XmlElement("D")]
+//	[XmlElement("D")]
+	[JsonProperty]
 	public List<direction> dir { get; set; }
 
 	public MazeNodeData(){
