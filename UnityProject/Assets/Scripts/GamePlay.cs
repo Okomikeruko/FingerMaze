@@ -62,7 +62,7 @@ public class GamePlay : MonoBehaviour {
 
 	public static void setRemaining(int r) {
 		float multiplier = Mathf.Max ((data.slope * data.level) + data.intercept, 1);
-		remaining += (int)((Mathf.Ceil(r/data.moveRange) + 1) * multiplier);
+		remaining /*+*/ = (int)((Mathf.Ceil(r/data.moveRange) + 1) * multiplier) + 5;
 	}
 
 	public static void setRemainingFromSave(int r) {
