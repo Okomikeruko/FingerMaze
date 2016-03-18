@@ -1,12 +1,8 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GamePlay.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="../../Bingo/Assets/Scripts/BingoSystem.cs">
     <Files>
-      <File FileName="Assets/Scripts/GamePlay.cs" Line="221" Column="7" />
-      <File FileName="Assets/Scripts/GUICounter.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/data.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/MazeBuilder.cs" Line="1" Column="1" />
-      <File FileName="Assets/Facebook/Scripts/AndroidFacebookLoader.cs" Line="6" Column="1" />
+      <File FileName="../../Bingo/Assets/Scripts/BingoSystem.cs" Line="11" Column="38" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
