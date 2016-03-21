@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\MazeController.cs" />
+    <Compile Include="Assets\Scripts\MazeCreator.cs" />
     <Compile Include="Assets\Scripts\MazeDecoder.cs" />
     <Compile Include="Assets\Scripts\ScrollToScale.cs" />
   </ItemGroup>
