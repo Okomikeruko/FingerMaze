@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class MazeCreator : MonoBehaviour {
 
@@ -30,7 +29,7 @@ public class MazeCreator : MonoBehaviour {
             }
             else
             {
-                this.GetComponent<MazeDecoder>().GenerateMaze(code);
+                GetComponent<MazeDecoder>().GenerateMaze(code, height, length);
                 maze = true;
             }
             progressBar.fillAmount = (code.Length - code.Split('0').Length) / (float)code.Length;
