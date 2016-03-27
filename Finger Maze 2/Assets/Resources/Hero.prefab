@@ -10,6 +10,7 @@ GameObject:
   - 224: {fileID: 22447216}
   - 222: {fileID: 22273842}
   - 114: {fileID: 11448412}
+  - 114: {fileID: 11412506}
   m_Layer: 5
   m_Name: Hero
   m_TagString: Untagged
@@ -17,6 +18,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &11412506
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 142932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b49901e6480d4362aa5450d517331a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distance: 50
+  speed: 10
+  mazeDecoder: {fileID: 0}
 --- !u!114 &11448412
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -64,7 +79,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -375, y: -200}
+  m_AnchoredPosition: {x: -375, y: -175}
   m_SizeDelta: {x: 25, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &100100000

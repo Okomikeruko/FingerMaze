@@ -8,6 +8,7 @@ public class MazeDecoder : MonoBehaviour {
 
     public Sprite[] sprites;
     public GameObject button, goal;
+    public HeroMotionController hmc;
 
     private string code;
     private List<Button> buttons;
@@ -17,6 +18,10 @@ public class MazeDecoder : MonoBehaviour {
         buttons = new List<Button>();
 	}
 	
+    public int LastIndex(){
+        return code.Length - 1;
+    }
+    
     public void GenerateMaze (string mazeCode, int h, int l){
         code = mazeCode;
         height = h;
@@ -27,12 +32,14 @@ public class MazeDecoder : MonoBehaviour {
             btn.transform.SetParent(transform);
             btn.GetComponent<Image>().sprite = sprites[HexToInt(code[i])];
             Button b = btn.GetComponent<Button>();
+            b.GetComponent<RectTransform>().localScale = Vector3.one;
             int index = i;
             b.onClick.AddListener(() => SetPath(index, 4));
             if (i == code.Length - 1)
             {
                 b.onClick.AddListener(() => Victory());
                 GameObject g = Instantiate(goal);
+                g.GetComponent<RectTransform>().localScale = Vector3.one;
                 g.transform.SetParent(btn.transform);
             }
             buttons.Add(b);
@@ -125,23 +132,27 @@ public class MazeDecoder : MonoBehaviour {
         return output;
     }
 
-    public void SetPath(int origin, int distance = 0, char prev = '0')
+    public void SetPath(int origin, int distance = 0, char prev = '0', string path = "")
     {
         if (prev == '0')
         {
             ResetPath();
+        } else {
+            buttons[origin].interactable = true;
         }
-        buttons[origin].interactable = true;
+        buttons[origin].onClick.AddListener(() => MoveHero(path, origin));
         string directions = HexToDirections(code[origin]);
         if (distance > 0)
         {
             for (int i = 0; i < directions.Length; i++)
             {
-                if (directions[i] != prev)
+                char dir = directions[i];
+                if (dir != prev)
                 {
-                    SetPath(GetMapIndex(origin, directions[i]), 
+                    SetPath(GetMapIndex(origin, dir), 
                         distance - 1, 
-                        GetOpposite(directions[i]));
+                        GetOpposite(dir),
+                        path + dir);
                 }
             }
         }
@@ -151,8 +162,14 @@ public class MazeDecoder : MonoBehaviour {
     {
         foreach (Button button in buttons)
         {
+            button.onClick.RemoveAllListeners();
             button.interactable = false;
         }
+    }
+    
+    public void MoveHero(string path, int i)
+    {
+        StartCoroutine(hmc.MoveMe(path, i));
     }
 
     public void Victory()

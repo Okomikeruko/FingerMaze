@@ -340,6 +340,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
+--- !u!114 &284134060 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11412506, guid: f189e4e8035e0bd46a0b06fb209131c3,
+    type: 2}
+  m_PrefabInternal: {fileID: 2010100960}
+  m_Script: {fileID: 11500000, guid: 9b49901e6480d4362aa5450d517331a8, type: 3}
 --- !u!1 &940265390
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,7 +394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a418700bd89820944935e2792f111b76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  min: 1
+  min: 0.75
   max: 2
 --- !u!114 &940265393
 MonoBehaviour:
@@ -664,6 +670,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9ffebab03217f447db1430b6e745997c, type: 3}
   button: {fileID: 186918, guid: b9f2551c8b50bd74a8cbf7d866d94b17, type: 2}
   goal: {fileID: 157236, guid: ce590a91b8de97e4abc909c87f22d271, type: 2}
+  hmc: {fileID: 284134060}
 --- !u!114 &1611733463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -849,6 +856,10 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 11412506, guid: f189e4e8035e0bd46a0b06fb209131c3, type: 2}
+      propertyPath: mazeDecoder
+      value: 
+      objectReference: {fileID: 1611733462}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f189e4e8035e0bd46a0b06fb209131c3, type: 2}
   m_IsPrefabParent: 0
